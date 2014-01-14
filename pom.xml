@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibudget</groupId>
 	<artifactId>tibudget-api</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
 	<packaging>jar</packaging>
 
 	<name>Ti'Budget API</name>
