@@ -30,7 +30,7 @@ public interface ICollectorPlugin {
 	/**
 	 * <p>If {@link #validate()} passed then this methods is called to
 	 * run account and operation collect. 
-	 * @param existingBankAccounts List of account previously collected by this collector
+	 * @param existingBankAccounts Set of account previously collected by this collector
 	 * @throws CollectError An error occured during collection (parsing, etc.)
 	 * @throws AccessDeny Access is refused, probably due to bad credentials
 	 * @throws TemporaryUnavailable Web site is not available, e.g. the site is under maintenance 

@@ -3,8 +3,8 @@ package com.tibudget.api.exceptions;
 import java.util.Collections;
 
 import com.tibudget.dto.MessageDto;
-import com.tibudget.dto.MessagesDto;
 import com.tibudget.dto.MessageDto.MessageType;
+import com.tibudget.dto.MessagesDto;
 
 /**
  * Exception that can contains messages to display to the end user 

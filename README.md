@@ -1,2 +1,2 @@
-Ti'Budget API
+ti'Budget API
 =============

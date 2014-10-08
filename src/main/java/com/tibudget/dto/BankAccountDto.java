@@ -55,8 +55,8 @@ public class BankAccountDto implements Serializable {
 	 * @param currentBalance
 	 *            Current balance of the account
 	 */
-	public BankAccountDto(Type type, String title, String providerName, double currentBalance) {
-		this(null, type, title, providerName, currentBalance, null, null);
+	public BankAccountDto(String id, Type type, String title, String providerName, double currentBalance) {
+		this(id, type, title, providerName, currentBalance, null, null);
 	}
 
 	/**

@@ -7,9 +7,9 @@
 	<version>0.0.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Ti'Budget API</name>
+	<name>ti'Budget API</name>
 	<description />
-	<url>http://www.tibudget.com</url>
+	<url>http://tibudget.com</url>
 
 	<!-- Specify hard-coded project properties here -->
 	<properties>
