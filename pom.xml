@@ -21,12 +21,12 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:ssh://git@git.cloudbees.com/tibudget/tibudget-api.git</connection>
-		<url>https://git.cloudbees.com/tibudget/tibudget-api.git</url>
-		<developerConnection>scm:git:ssh://git@git.cloudbees.com/tibudget/tibudget-api.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com:tibudget/tibudget-api.git</connection>
+		<url>https://git@github.com:tibudget/tibudget-api.git</url>
+		<developerConnection>scm:git:ssh://git@github.com:tibudget/tibudget-api.git</developerConnection>
 	</scm>
 
-	<distributionManagement>
+	<!--distributionManagement>
 		<repository>
 			<id>cloudbees-private-repository</id>
 			<url>dav:https://repository-tibudget.forge.cloudbees.com/release/</url>
@@ -35,7 +35,7 @@
 			<id>cloudbees-private-repository</id>
 			<url>dav:https://repository-tibudget.forge.cloudbees.com/snapshot/</url>
 		</snapshotRepository>
-	</distributionManagement>
+	</distributionManagement-->
 
 	<build>
 		<extensions>
@@ -51,10 +51,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0</version>
+				<version>3.11.0</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>11</source>
+					<target>11</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
@@ -62,7 +62,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.1</version>
+				<version>4.0.0-M8</version>
 				<configuration>
 					<locales>en,fr</locales>
 				</configuration>
@@ -75,7 +75,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<version>3.6.0</version>
 				<configuration>
 				</configuration>
 			</plugin>
