@@ -2,4 +2,7 @@ ti'Budget API
 =============
 #Currently in development, not usable yet.#
 
-[ ![Codeship Status for tibudget/tibudget-api](https://www.codeship.io/projects/b12b7790-2c5c-0132-f651-725511a19204/status)](https://www.codeship.io/projects/38824)
+[![GitHub release](https://img.shields.io/github/release/tibudget/tibudget-api)](https://github.com/tibudget/tibudget-api/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/tibudget/tibudget-api)](https://github.com/tibudget/tibudget-api/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/tibudget/tibudget-api)](https://github.com/tibudget/tibudget-api/fork)
+[![GitHub Contributors](https://img.shields.io/github/contributors/tibudget/tibudget-api)](https://github.com/tibudget/tibudget-api/graphs/contributors)
