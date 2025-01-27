@@ -9,8 +9,6 @@ import com.tibudget.dto.MessageDto.MessageType;
  */
 public class ConnectionFailure extends MessagesException {
 
-	private static final long serialVersionUID = 6905246317721861876L;
-	
 	public ConnectionFailure(String messageKey, Object... messageArguments) {
 		super(MessageType.ERROR, messageKey, messageArguments);
 	}

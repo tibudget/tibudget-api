@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * an HTML input form. Getter and setter must exists. Getter
  * gives the default value and setter validates the 
  * given value. If value is not correct it must throw a
- * {@link com.nbo.whatispend.api.exception.ParameterError ParameterError} 
+ * {@link com.tibudget.api.exceptions.ParameterError ParameterError}
  * exception (see javadoc for more information).
  */
 @Retention(RetentionPolicy.RUNTIME)

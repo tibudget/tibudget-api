@@ -10,8 +10,6 @@ import com.tibudget.dto.MessageDto.MessageType;
 
 public class MessagesDto implements Serializable {
 
-	private static final long serialVersionUID = 6407085392060097094L;
-
 	Map<String, List<MessageDto>> messages;
 
 	public MessagesDto() {

@@ -11,8 +11,6 @@ import com.tibudget.dto.MessagesDto;
  */
 public abstract class MessagesException extends Exception {
 
-	private static final long serialVersionUID = 1531870875502714752L;
-
 	private MessagesDto messages;
 
 	public MessagesException(MessageType type, String messageKey, Object... messageArguments) {

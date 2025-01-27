@@ -7,8 +7,6 @@ import java.util.Map;
 
 public class MessageDto implements Serializable {
 
-	private static final long serialVersionUID = -5267131817450337217L;
-
 	public enum MessageType {
 		INFO, ERROR, WARN, SUCCESS,
 	}

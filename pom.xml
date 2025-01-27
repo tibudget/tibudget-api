@@ -4,20 +4,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibudget</groupId>
 	<artifactId>tibudget-api</artifactId>
-	<version>0.0.9-SNAPSHOT</version>
+	<version>0.0.10-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ti'Budget API</name>
+	<name>ti'bu API</name>
 	<description />
-	<url>http://tibudget.com</url>
+	<url>https://tibudget.com</url>
 
 	<!-- Specify hard-coded project properties here -->
 	<properties>
-		<!-- To make the build platform independant -->
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-
-		<!-- This is just for "eclipse:eclipse" goal to always attempt downloading sources -->
-		<downloadSources>true</downloadSources>
+		<!-- To make the build platform independent -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>8</maven.compiler.release>
 	</properties>
 
 	<scm>
@@ -53,34 +51,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>3.13.0</version>
 				<configuration>
-					<source>11</source>
-					<target>11</target>
+					<release>8</release>
 					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>4.0.0-M8</version>
-				<configuration>
-					<locales>en,fr</locales>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>
