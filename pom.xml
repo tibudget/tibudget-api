@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibudget</groupId>
 	<artifactId>tibudget-api</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>jar</packaging>
 
 	<name>ti'bu API</name>
@@ -23,7 +23,7 @@
 		<connection>scm:git:${project.scm.url}</connection>
 		<developerConnection>scm:git:${project.scm.url}</developerConnection>
 		<url>git@github.com:tibudget/tibudget-api.git</url>
-		<tag>HEAD</tag>
+		<tag>tibudget-api-0.1</tag>
 	</scm>
 
 	<distributionManagement>
