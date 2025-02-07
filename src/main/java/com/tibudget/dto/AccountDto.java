@@ -8,6 +8,14 @@ public class AccountDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
     public enum AccountDtoType {
         OTHER, BANK_CHECKING, BANK_SAVING, BANK_STOCK, GAMBLE
     }
@@ -30,6 +38,11 @@ public class AccountDto implements Serializable {
      * Name of the bank or provider of the account (e.g. Paypal, Amazon, etc.)
      */
     private String providerName;
+
+    /**
+     * Currency code ISO 4217
+     */
+    private String currencyCode;
 
     private double currentBalance;
 
@@ -55,10 +68,11 @@ public class AccountDto implements Serializable {
      * @param type            Type of account
      * @param label           Label of the account
      * @param providerName    Name of the bank or provider of the account
+     * @param currencyCode    Currency code ISO 4217
      * @param currentBalance  Current balance of the account
      */
-    public AccountDto(String idFromCollector, AccountDtoType type, String label, String providerName, double currentBalance) {
-        this(UUID.randomUUID().toString(), idFromCollector, type, label, providerName, currentBalance, 0.0, 0.0, null, null);
+    public AccountDto(String idFromCollector, AccountDtoType type, String label, String providerName, String currencyCode, double currentBalance) {
+        this(UUID.randomUUID().toString(), idFromCollector, type, label, providerName, currencyCode, currentBalance, 0.0, 0.0, null, null);
     }
 
     /**
@@ -69,6 +83,7 @@ public class AccountDto implements Serializable {
      * @param type                    Type of account
      * @param title                   Title of the bank account
      * @param providerName            Name of the bank or provider of the account
+     * @param currencyCode            Currency code ISO 4217
      * @param currentBalance          Current balance of the account
      * @param shouldNotBeUnderBalance Balance should not be under this amount
      * @param mustNotBeUnderBalance   Balance must not be under this amount
@@ -82,6 +97,7 @@ public class AccountDto implements Serializable {
             AccountDtoType type,
             String title,
             String providerName,
+            String currencyCode,
             double currentBalance,
             double shouldNotBeUnderBalance,
             double mustNotBeUnderBalance,
@@ -94,6 +110,7 @@ public class AccountDto implements Serializable {
         this.type = type;
         this.label = title;
         this.providerName = providerName;
+        this.currencyCode = currencyCode;
         this.currentBalance = currentBalance;
         this.shouldNotBeUnderBalance = shouldNotBeUnderBalance;
         this.mustNotBeUnderBalance = mustNotBeUnderBalance;
