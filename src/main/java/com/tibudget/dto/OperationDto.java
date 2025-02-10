@@ -2,6 +2,7 @@ package com.tibudget.dto;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,17 +61,17 @@ public class OperationDto implements Serializable {
      * When type is PURCHASE you should add paiements informations so the operation can be linked to other related
      * operations.
      */
-    private List<PaymentDto> paiments;
+    private final List<PaymentDto> paiments;
 
     /**
      * When type is PURCHASE you should add the invoice. You can also add contract or other related files.
      */
-    private List<FileDto> files;
+    private final List<FileDto> files;
 
     /**
      * When type is PURCHASE you should list the products that have been bought
      */
-    private List<ItemDto> items;
+    private final List<ItemDto> items;
 
     /**
      * @param accountUuid    UUID of the account for this operation
@@ -100,6 +101,9 @@ public class OperationDto implements Serializable {
         this.label = label;
         this.type = type;
         this.value = value;
+        this.files = new ArrayList<>();
+        this.items = new ArrayList<>();
+        this.paiments = new ArrayList<>();
     }
 
     public String getAccountUuid() {
@@ -164,5 +168,29 @@ public class OperationDto implements Serializable {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public List<PaymentDto> getPaiments() {
+        return paiments;
+    }
+
+    public List<FileDto> getFiles() {
+        return files;
+    }
+
+    public List<ItemDto> getItems() {
+        return items;
+    }
+
+    public void addPaiment(PaymentDto paiment) {
+        this.paiments.add(paiment);
+    }
+
+    public void addFile(FileDto file) {
+        this.files.add(file);
+    }
+
+    public void addItem(ItemDto item) {
+        this.items.add(item);
     }
 }
