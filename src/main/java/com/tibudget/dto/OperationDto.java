@@ -1,40 +1,41 @@
 package com.tibudget.dto;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class OperationDto implements Serializable {
 
+    /**
+     * Represents the type of a financial operation, which is essential for linking related operations.
+     */
     public enum OperationDtoType {
         /**
-         * when no other type is pertinent
+         * A purchase transaction, representing a payment made at a store (either online or physical).
+         * This type of operation is always linked to a {@link #PAYMENT} operation.
          */
-        OTHER,
+        PURCHASE,
+
         /**
-         * cash payment or ATM withdraw
+         * A payment transaction, representing a withdrawal from a bank account.
+         * This type of operation is always linked to a {@link #PURCHASE} operation.
          */
-        CASH,
+        PAYMENT,
+
         /**
-         * account to account transfert
+         * A money transfer between accounts. This type of operation is always linked to another {@link #TRANSFER}
+         * operation.
          */
-        TRANSFERT,
+        TRANSFER,
+
         /**
-         * Debit card payment
+         * An internal operation applied by the account provider, such as bank fees, interest, or other adjustments.
+         * This type of operation is never linked to any other operation.
          */
-        DEBIT_CARD,
-        /**
-         * Credit card payment
-         */
-        CREDIT_CARD,
-        /**
-         * Check payment
-         */
-        CHECK,
-        /**
-         * Bank cost
-         */
-        BANK
+        INTERNAL,
     }
+
 
     private String accountUuid;
 
@@ -45,7 +46,7 @@ public class OperationDto implements Serializable {
      */
     private String idForCollector;
 
-    private Double value;
+    private double value;
 
     private Date dateValue;
 
@@ -54,6 +55,22 @@ public class OperationDto implements Serializable {
     private String label;
 
     private String details;
+
+    /**
+     * When type is PURCHASE you should add paiements informations so the operation can be linked to other related
+     * operations.
+     */
+    private List<PaymentDto> paiments;
+
+    /**
+     * When type is PURCHASE you should add the invoice. You can also add contract or other related files.
+     */
+    private List<FileDto> files;
+
+    /**
+     * When type is PURCHASE you should list the products that have been bought
+     */
+    private List<ItemDto> items;
 
     /**
      * @param accountUuid    UUID of the account for this operation
