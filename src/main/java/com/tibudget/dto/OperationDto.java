@@ -73,6 +73,13 @@ public class OperationDto implements Serializable {
      */
     private final List<ItemDto> items;
 
+    public OperationDto() {
+        super();
+        this.files = new ArrayList<>();
+        this.items = new ArrayList<>();
+        this.paiments = new ArrayList<>();
+    }
+
     /**
      * @param accountUuid    UUID of the account for this operation
      * @param idForCollector ID used by the collector to identify the operation, if possible, use a unique identifier also used by the provider (bank)
@@ -93,6 +100,7 @@ public class OperationDto implements Serializable {
             String details,
             Double value
     ) {
+        this();
         this.accountUuid = accountUuid;
         this.dateOperation = dateOperation;
         this.dateValue = dateValue;
@@ -101,9 +109,6 @@ public class OperationDto implements Serializable {
         this.label = label;
         this.type = type;
         this.value = value;
-        this.files = new ArrayList<>();
-        this.items = new ArrayList<>();
-        this.paiments = new ArrayList<>();
     }
 
     public String getAccountUuid() {
@@ -166,7 +171,7 @@ public class OperationDto implements Serializable {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

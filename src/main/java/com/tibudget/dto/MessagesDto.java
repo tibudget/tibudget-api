@@ -14,19 +14,14 @@ public class MessagesDto implements Serializable {
 
 	public MessagesDto() {
 		super();
-		messages = new HashMap<String, List<MessageDto>>();
+		messages = new HashMap<>();
 	}
 
 	public MessagesDto(Iterable<MessageDto> msg) {
-		super();
-		messages = new HashMap<String, List<MessageDto>>();
+		this();
 		for (MessageDto messageDto : msg) {
-			List<MessageDto> thisMsg = messages.get(messageDto.getFieldName());
-			if (thisMsg == null) {
-				thisMsg = new ArrayList<MessageDto>();
-				messages.put(messageDto.getFieldName(), thisMsg);
-			}
-			thisMsg.add(messageDto);
+            List<MessageDto> thisMsg = messages.computeIfAbsent(messageDto.getFieldName(), k -> new ArrayList<>());
+            thisMsg.add(messageDto);
 		}
 	}
 

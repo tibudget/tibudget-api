@@ -32,7 +32,15 @@ public class FileDto implements Serializable {
      */
     private File file;
 
+    /**
+     * This empty constructor can be usefull for tests
+     */
+    public FileDto() {
+        super();
+    }
+
     public FileDto(FileDtoType type, String label, File file) {
+        this();
         this.type = type;
         this.label = label;
         this.file = file;
@@ -48,5 +56,17 @@ public class FileDto implements Serializable {
 
     public FileDtoType getType() {
         return type;
+    }
+
+    public void setType(FileDtoType type) {
+        this.type = type;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

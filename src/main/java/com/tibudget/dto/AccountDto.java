@@ -81,6 +81,13 @@ public class AccountDto implements Serializable {
     private String lastOperationProviderId;
 
     /**
+     * This empty constructor can be usefull for tests
+     */
+    public AccountDto() {
+        super();
+    }
+
+    /**
      * Constructor usually used by collectors to create a new account
      *
      * @param idFromCollector ID used by the collector to identify the account
@@ -119,7 +126,7 @@ public class AccountDto implements Serializable {
             Date lastUpdate,
             String lastOperationProviderId
     ) {
-        super();
+        this();
         this.uuid = uuid;
         this.idForCollector = idForCollector;
         this.type = type;

@@ -145,4 +145,6 @@ public class ItemDto implements Serializable {
     public void setReference(ProductReferenceType type, String reference) {
         this.references.put(type, reference);
     }
+
+
 }

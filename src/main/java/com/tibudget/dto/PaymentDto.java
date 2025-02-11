@@ -90,7 +90,12 @@ public class PaymentDto implements Serializable {
      */
     private String referenceTypePattern;
 
+    public PaymentDto() {
+        super();
+    }
+
     public PaymentDto(PaymentDtoType type, String providerName, Date paymentDate, double amount, String currencyCode, String referencePattern, String referenceTypePattern) {
+        this();
         this.type = type;
         this.providerName = providerName;
         this.paymentDate = paymentDate;

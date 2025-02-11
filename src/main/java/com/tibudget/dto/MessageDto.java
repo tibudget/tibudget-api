@@ -2,8 +2,6 @@ package com.tibudget.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class MessageDto implements Serializable {
 
@@ -11,13 +9,13 @@ public class MessageDto implements Serializable {
 		INFO, ERROR, WARN, SUCCESS,
 	}
 	
-	private MessageType type;
+	private final MessageType type;
 	
-	private Object[] messageArguments;
+	private final Object[] messageArguments;
 	
-	private String messageKey;
+	private final String messageKey;
 	
-	private String fieldName;
+	private final String fieldName;
 
 	public MessageDto(MessageType type, String fieldName, String messageKey, Object... messageArguments) {
 		super();
