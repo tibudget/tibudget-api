@@ -56,6 +56,11 @@ public class PaymentDto implements Serializable {
     private PaymentDtoType type;
 
     /**
+     * Provider of the payment method, e.g. Mastercard, Visa, etc.
+     */
+    private String providerName;
+
+    /**
      * The date when the payment was made.
      */
     private Date paymentDate;
@@ -85,8 +90,9 @@ public class PaymentDto implements Serializable {
      */
     private String referenceTypePattern;
 
-    public PaymentDto(PaymentDtoType type, Date paymentDate, double amount, String currencyCode, String referencePattern, String referenceTypePattern) {
+    public PaymentDto(PaymentDtoType type, String providerName, Date paymentDate, double amount, String currencyCode, String referencePattern, String referenceTypePattern) {
         this.type = type;
+        this.providerName = providerName;
         this.paymentDate = paymentDate;
         this.amount = amount;
         this.currencyCode = currencyCode;
@@ -100,6 +106,14 @@ public class PaymentDto implements Serializable {
 
     public void setType(PaymentDtoType type) {
         this.type = type;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
     }
 
     public Date getPaymentDate() {
