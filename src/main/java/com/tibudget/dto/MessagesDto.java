@@ -29,11 +29,11 @@ public class MessagesDto implements Serializable {
 		return hasFieldMessages(null);
 	}
 
-	public Iterable<MessageDto> getGlobalMessages() {
+	public List<MessageDto> getGlobalMessages() {
 		return getFieldMessages(null);
 	}
 
-	public Iterable<MessageDto> getAllMessages() {
+	public List<MessageDto> getAllMessages() {
 		List<MessageDto> allMessages = new ArrayList<MessageDto>();
 		for (List<MessageDto> messageDtos : messages.values()) {
 			allMessages.addAll(messageDtos);
@@ -45,7 +45,7 @@ public class MessagesDto implements Serializable {
 		return messages.get(fieldName) != null;
 	}
 
-	public Iterable<MessageDto> getFieldMessages(String fieldName) {
+	public List<MessageDto> getFieldMessages(String fieldName) {
 		return messages.get(fieldName);
 	}
 	

@@ -5,7 +5,7 @@ import com.tibudget.dto.AccountDto;
 import com.tibudget.dto.MessageDto;
 import com.tibudget.dto.OperationDto;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +42,7 @@ public interface CollectorPlugin {
 	 *
 	 * @return a collection of {@link MessageDto} containing validation results.
 	 */
-	Collection<MessageDto> validate();
+	List<MessageDto> validate();
 
 	/**
 	 * Initiates the data collect process after successful validation.
@@ -64,7 +64,7 @@ public interface CollectorPlugin {
 	 *
 	 * @return an iterable collection of {@link AccountDto} representing synchronized accounts.
 	 */
-	Iterable<AccountDto> getAccounts();
+	List<AccountDto> getAccounts();
 
 	/**
 	 * Retrieves the list of new transactions detected since the last {@link #collect(Iterable)} call.
@@ -72,7 +72,7 @@ public interface CollectorPlugin {
 	 *
 	 * @return an iterable collection of {@link OperationDto} representing new transactions.
 	 */
-	Iterable<OperationDto> getOperations();
+	List<OperationDto> getOperations();
 
 	/**
 	 * Retrieves the current progress of the data collect process as a percentage.
