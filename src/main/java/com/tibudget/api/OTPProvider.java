@@ -30,7 +30,8 @@ public interface OTPProvider {
      * @param channel The channel where the OTP is expected (e.g., SMS, Email, or TOTP).
      * @param keyword A keyword that must be present in the message containing the OTP, usually the brand or service sending the code.
      * @param pattern The expected format of the OTP. You can use predefined patterns such as {@link #PATTERN_6_DIGIT}.
+     * @param prompt Message to display to the user
      * @return The OTP if found within a reasonable delay, or {@code null} if no matching code is available.
      */
-    String getCode(Channel channel, String keyword, String pattern);
+    String getCode(Channel channel, String keyword, String pattern, String prompt);
 }
