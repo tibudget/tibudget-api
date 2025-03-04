@@ -1,11 +1,15 @@
 package com.tibudget.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Data Transfer Object representing a financial operation.
+ * It contains essential information about an operation, such as its type, amount, dates, and associated metadata.
+ */
 public class OperationDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Represents the type of a financial operation, which is essential for linking related operations.
@@ -36,165 +40,136 @@ public class OperationDto implements Serializable {
         INTERNAL,
     }
 
+    /** Common metadata keys : IBAN of the destinataire of a transfert */
+    public static final String METADATA_DEST_IBAN = "DEST_IBAN";
+    /** Common metadata keys : Reference of this operation (transaction ID for exemple) */
+    public static final String METADATA_REFERENCE = "REFERENCE";
+    /** Common metadata keys : Comma separated list of categories */
+    public static final String METADATA_CATEGORIES = "CATEGORIES";
 
     private String accountUuid;
-
     private OperationDtoType type;
-
-    /**
-     * ID used by the collector to identify the operation
-     */
-    private String idForCollector;
-
-    private double value;
-
+    private final Map<String, String> metadatas;
+    private double amount;
+    private String currencyCode;
     private Date dateValue;
-
     private Date dateOperation;
-
     private String label;
-
     private String details;
-
-    /**
-     * When type is PURCHASE you should add paiements informations so the operation can be linked to other related
-     * operations.
-     */
-    private final List<PaymentDto> paiments;
-
-    /**
-     * When type is PURCHASE you should add the invoice. You can also add contract or other related files.
-     */
+    private final List<PaymentDto> payments;
     private final List<FileDto> files;
-
-    /**
-     * When type is PURCHASE you should list the products that have been bought
-     */
     private final List<ItemDto> items;
 
+    /**
+     * Default constructor initializing lists and metadata map.
+     */
     public OperationDto() {
-        super();
+        this.metadatas = new HashMap<>();
         this.files = new ArrayList<>();
         this.items = new ArrayList<>();
-        this.paiments = new ArrayList<>();
+        this.payments = new ArrayList<>();
     }
 
     /**
-     * @param accountUuid    UUID of the account for this operation
-     * @param idForCollector ID used by the collector to identify the operation, if possible, use a unique identifier also used by the provider (bank)
-     * @param type           Type of operation
-     * @param dateValue      Value date (when the user did the operation)
-     * @param dateOperation  Operation date (when the bank operate the operation)
-     * @param label          Label of operation
-     * @param details        Details of the operation
-     * @param value          Amount of the operation
+     * Constructs an OperationDto with mandatory details.
+     *
+     * @param accountUuid   UUID of the account for this operation.
+     * @param type          Type of operation.
+     * @param dateOperation Operation date (when the bank processes the operation).
+     * @param dateValue     Value date (when the user performed the operation).
+     * @param label         Label of the operation.
+     * @param details       Details of the operation.
+     * @param amount        Amount of the operation.
      */
-    public OperationDto(
-            String accountUuid,
-            String idForCollector,
-            OperationDtoType type,
-            Date dateOperation,
-            Date dateValue,
-            String label,
-            String details,
-            Double value
-    ) {
+    public OperationDto(String accountUuid, OperationDtoType type, Date dateOperation, Date dateValue,
+                        String label, String details, double amount) {
         this();
         this.accountUuid = accountUuid;
         this.dateOperation = dateOperation;
         this.dateValue = dateValue;
         this.details = details;
-        this.idForCollector = idForCollector;
         this.label = label;
         this.type = type;
-        this.value = value;
+        this.amount = amount;
     }
 
-    public String getAccountUuid() {
-        return accountUuid;
-    }
+    public String getAccountUuid() { return accountUuid; }
+    public void setAccountUuid(String accountUuid) { this.accountUuid = accountUuid; }
 
-    public void setAccountUuid(String accountUuid) {
-        this.accountUuid = accountUuid;
-    }
+    public Date getDateOperation() { return dateOperation; }
+    public void setDateOperation(Date dateOperation) { this.dateOperation = dateOperation; }
 
-    public Date getDateOperation() {
-        return dateOperation;
-    }
+    public Date getDateValue() { return dateValue; }
+    public void setDateValue(Date dateValue) { this.dateValue = dateValue; }
 
-    public void setDateOperation(Date dateOperation) {
-        this.dateOperation = dateOperation;
-    }
+    public String getDetails() { return details; }
+    public void setDetails(String details) { this.details = details; }
 
-    public Date getDateValue() {
-        return dateValue;
-    }
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
 
-    public void setDateValue(Date dateValue) {
-        this.dateValue = dateValue;
-    }
+    public OperationDtoType getType() { return type; }
+    public void setType(OperationDtoType type) { this.type = type; }
 
-    public String getDetails() {
-        return details;
-    }
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
+    public String getCurrencyCode() { return currencyCode; }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 
-    public String getIdForCollector() {
-        return idForCollector;
-    }
+    /**
+     * Returns an unmodifiable list of payments linked to this operation.
+     *
+     * @return List of payments.
+     */
+    public List<PaymentDto> getPayments() { return Collections.unmodifiableList(payments); }
+    public void addPayment(PaymentDto payment) { this.payments.add(payment); }
 
-    public void setIdForCollector(String idForCollector) {
-        this.idForCollector = idForCollector;
-    }
+    /**
+     * Returns an unmodifiable list of files linked to this operation.
+     *
+     * @return List of files.
+     */
+    public List<FileDto> getFiles() { return Collections.unmodifiableList(files); }
+    public void addFile(FileDto file) { this.files.add(file); }
 
-    public String getLabel() {
-        return label;
-    }
+    /**
+     * Returns an unmodifiable list of items linked to this operation.
+     *
+     * @return List of items.
+     */
+    public List<ItemDto> getItems() { return Collections.unmodifiableList(items); }
+    public void addItem(ItemDto item) { this.items.add(item); }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+    /**
+     * Returns the metadata map.
+     *
+     * @return Map of metadata key-value pairs.
+     */
+    public Map<String, String> getMetadatas() { return Collections.unmodifiableMap(metadatas); }
 
-    public OperationDtoType getType() {
-        return type;
-    }
+    /**
+     * Retrieves a specific metadata value by key.
+     *
+     * @param key The metadata key.
+     * @return The associated metadata value, or null if not found.
+     */
+    public String getMetadata(String key) { return metadatas.get(key); }
 
-    public void setType(OperationDtoType type) {
-        this.type = type;
-    }
-
-    public Double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public List<PaymentDto> getPaiments() {
-        return paiments;
-    }
-
-    public List<FileDto> getFiles() {
-        return files;
-    }
-
-    public List<ItemDto> getItems() {
-        return items;
-    }
-
-    public void addPaiment(PaymentDto paiment) {
-        this.paiments.add(paiment);
-    }
-
-    public void addFile(FileDto file) {
-        this.files.add(file);
-    }
-
-    public void addItem(ItemDto item) {
-        this.items.add(item);
+    /**
+     * Sets a metadata key-value pair.
+     *
+     * @param key   The metadata key.
+     * @param data  The metadata value. Set to null to delete the metadata.
+     */
+    public void setMetadata(String key, String data) {
+        if (key != null) {
+            if (data != null) {
+                this.metadatas.put(key, data);
+            }
+            else {
+                this.metadatas.remove(key);
+            }
+        }
     }
 }

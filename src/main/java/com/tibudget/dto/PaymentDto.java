@@ -76,33 +76,32 @@ public class PaymentDto implements Serializable {
     private String currencyCode;
 
     /**
-     * The reference of the payment or a pattern matching this reference.
-     * This can be the transaction reference.
+     * The reference of the payment (ID of the transaction for exemple).
      */
-    private String referencePattern;
+    private String reference;
 
     /**
-     * The reference pattern corresponding to the type of payment.
-     *
-     * <p>For example, when paying with a card, the reference might only include
-     * the last four digits. In such a case, the reference pattern could be:
-     * <pre>{@code "^(\\d{4}-){2}\\d{4}-1234$"}</pre></p>
+     * The reference payment method used for this payment.
+     * <li>CARD: we expect the last 4 digits of the card</li>
+     * <li>TRANSFERT: we expect the IBAN of the destinataire</li>
+     * <li>CHECK: the number of the check</li>
+     * <li>CASH, GIFT_CARD, STORE_CREDIT: let empty</li>
      */
-    private String referenceTypePattern;
+    private String paymentMethodReference;
 
     public PaymentDto() {
         super();
     }
 
-    public PaymentDto(PaymentDtoType type, String providerName, Date paymentDate, double amount, String currencyCode, String referencePattern, String referenceTypePattern) {
+    public PaymentDto(PaymentDtoType type, String providerName, Date paymentDate, double amount, String currencyCode, String reference, String paymentMethodReference) {
         this();
         this.type = type;
         this.providerName = providerName;
         this.paymentDate = paymentDate;
         this.amount = amount;
         this.currencyCode = currencyCode;
-        this.referencePattern = referencePattern;
-        this.referenceTypePattern = referenceTypePattern;
+        this.reference = reference;
+        this.paymentMethodReference = paymentMethodReference;
     }
 
     public PaymentDtoType getType() {
@@ -145,19 +144,19 @@ public class PaymentDto implements Serializable {
         this.currencyCode = currencyCode;
     }
 
-    public String getReferencePattern() {
-        return referencePattern;
+    public String getReference() {
+        return reference;
     }
 
-    public void setReferencePattern(String referencePattern) {
-        this.referencePattern = referencePattern;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
-    public String getReferenceTypePattern() {
-        return referenceTypePattern;
+    public String getPaymentMethodReference() {
+        return paymentMethodReference;
     }
 
-    public void setReferenceTypePattern(String referenceTypePattern) {
-        this.referenceTypePattern = referenceTypePattern;
+    public void setPaymentMethodReference(String paymentMethodReference) {
+        this.paymentMethodReference = paymentMethodReference;
     }
 }

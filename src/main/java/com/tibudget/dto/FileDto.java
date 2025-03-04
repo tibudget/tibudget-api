@@ -8,12 +8,13 @@ public class FileDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Defines the type of an account, determining how it will be used.
+     * Defines the type of a file, determining how it will be used.
      */
     public enum FileDtoType {
         IMAGE,
         INVOICE,
         CONTRACT,
+        NOTICE,
         OTHER
     }
 
