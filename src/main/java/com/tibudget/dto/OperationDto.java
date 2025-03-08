@@ -12,7 +12,7 @@ public class OperationDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final int LABEL_MAX_LENGTH = 100;
-    public static final int DETAILS_MAX_LENGTH = 100;
+    public static final int DETAILS_MAX_LENGTH = 1000;
 
     /**
      * Represents the type of a financial operation, which is essential for linking related operations.
