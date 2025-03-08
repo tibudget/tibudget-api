@@ -11,6 +11,9 @@ public class OperationDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final int LABEL_MAX_LENGTH = 100;
+    public static final int DETAILS_MAX_LENGTH = 100;
+
     /**
      * Represents the type of a financial operation, which is essential for linking related operations.
      */
@@ -54,7 +57,13 @@ public class OperationDto implements Serializable {
     private String currencyCode;
     private Date dateValue;
     private Date dateOperation;
+    /**
+     * Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
     private String label;
+    /**
+     * Limited to {@link #DETAILS_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
     private String details;
     private final List<PaymentDto> payments;
     private final List<FileDto> files;
@@ -103,9 +112,17 @@ public class OperationDto implements Serializable {
     public void setDateValue(Date dateValue) { this.dateValue = dateValue; }
 
     public String getDetails() { return details; }
+
+    /**
+     * @param details Limited to {@link #DETAILS_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
     public void setDetails(String details) { this.details = details; }
 
     public String getLabel() { return label; }
+
+    /**
+     * @param label Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
     public void setLabel(String label) { this.label = label; }
 
     public OperationDtoType getType() { return type; }

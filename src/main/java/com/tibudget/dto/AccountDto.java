@@ -94,7 +94,7 @@ public class AccountDto implements Serializable {
      * @param currentBalance  Current balance of the account
      */
     public AccountDto(AccountDtoType type, String label, String providerName, String currencyCode, double currentBalance) {
-        this(UUID.randomUUID().toString(), type, label, providerName, currencyCode, currentBalance, null, null);
+        this(UUID.randomUUID().toString(), type, label, providerName, currencyCode, currentBalance, null);
     }
 
     /**
@@ -107,8 +107,6 @@ public class AccountDto implements Serializable {
      * @param currencyCode            Currency code ISO 4217
      * @param currentBalance          Current balance of the account
      * @param lastUpdate              Last time that bank account has been updated successfully
-     * @param lastOperationProviderId An ID that collector can set to know what was the last
-     *                                collected operation
      */
     public AccountDto(
             String uuid,
@@ -117,8 +115,7 @@ public class AccountDto implements Serializable {
             String providerName,
             String currencyCode,
             double currentBalance,
-            Date lastUpdate,
-            String lastOperationProviderId
+            Date lastUpdate
     ) {
         this();
         this.uuid = uuid;
