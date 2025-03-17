@@ -67,6 +67,14 @@ public interface CollectorPlugin {
 	List<AccountDto> getAccounts();
 
 	/**
+	 * Set accounts previously collected by this collector. Account can be used to store the last collected operation
+	 * in metadatas for exemple. The label may have been modified by the user, this must be preserved.
+	 *
+	 * @param accounts List of accounts (can be empty)
+	 */
+	void setAccounts(List<AccountDto> accounts);
+
+	/**
 	 * Retrieves the list of new transactions detected since the last {@link #collect(Iterable)} call.
 	 * Transactions should be associated with accounts present in the list returned by {@link #getAccounts()}.
 	 *
