@@ -17,9 +17,16 @@ public interface CollectorPlugin {
 	/**
 	 * Provides an OTP (One-Time Password) provider to the collector if required.
 	 *
-	 * @param otpProvider an instance of {@link OTPProvider} to handle OTP authentication.
+	 * @param otpProvider an instance of {@link OTPProvider} to handle OTP authentication
 	 */
 	void setOTPProvider(OTPProvider otpProvider);
+
+	/**
+	 * Provides a human simulator provider that can helps by pass anti-spam protections.
+	 *
+	 * @param humanSimulatorProvider an instance of {@link HumanSimulatorProvider}
+	 */
+	void setHumanSimulatorProvider(HumanSimulatorProvider humanSimulatorProvider);
 
 	/**
 	 * Restores previously stored cookies to maintain session continuity if applicable.
