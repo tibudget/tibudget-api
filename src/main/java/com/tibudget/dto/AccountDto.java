@@ -7,6 +7,9 @@ public class AccountDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final int LABEL_MAX_LENGTH = 100;
+    public static final int PROVIDER_NAME_MAX_LENGTH = 100;
+
     /**
      * Defines the type of an account, determining how it will be used.
      */
@@ -75,6 +78,8 @@ public class AccountDto implements Serializable {
 
     private final List<PaymentMethodDto> paymentMethods;
 
+    private final List<LoyaltyCardDto> loyaltyCards;
+
     /**
      * This empty constructor can be usefull for tests
      */
@@ -82,6 +87,7 @@ public class AccountDto implements Serializable {
         super();
         this.metadatas = new HashMap<>();
         this.paymentMethods = new ArrayList<>();
+        this.loyaltyCards = new ArrayList<>();
     }
 
     /**
@@ -215,6 +221,16 @@ public class AccountDto implements Serializable {
     public void addPaymentMethod(PaymentMethodDto paymentMethod) {
         if (paymentMethod != null) {
             paymentMethods.add(paymentMethod);
+        }
+    }
+
+    public List<LoyaltyCardDto> getLoyaltyCards() {
+        return Collections.unmodifiableList(loyaltyCards);
+    }
+
+    public void addLoyaltyCard(LoyaltyCardDto loyaltyCard) {
+        if (loyaltyCard != null) {
+            loyaltyCards.add(loyaltyCard);
         }
     }
 
