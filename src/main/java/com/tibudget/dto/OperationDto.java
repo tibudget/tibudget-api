@@ -47,24 +47,50 @@ public class OperationDto implements Serializable {
     public static final String METADATA_DEST_IBAN = "DEST_IBAN";
     /** Common metadata keys : Reference of this operation (transaction ID for exemple) */
     public static final String METADATA_REFERENCE = "REFERENCE";
-    /** Common metadata keys : Comma separated list of categories */
-    public static final String METADATA_CATEGORIES = "CATEGORIES";
+    /** Common metadata keys : if available and applicable, provide the merchant name */
+    public static final String METADATA_MERCHANT_NAME = "MERCHANT_NAME";
+    /** Common metadata keys : if available and applicable, provide the merchant website */
+    public static final String METADATA_MERCHANT_WEBSITE = "MERCHANT_WEBSITE";
+    /** Common metadata keys : if available and applicable, provide the check number */
+    public static final String METADATA_CHECK_NUMBER = "CHECK_NUMBER";
 
     private String accountUuid;
     private OperationDtoType type;
     private final Map<String, String> metadatas;
+
+    /**
+     * The amount of an operation should be negative for PURCHASE or PAYMENT transactions,
+     * except in the case of a refund.
+     * This ensures that amounts are displayed from the user's perspective:
+     * negative values represent expenses, while positive values indicate credits.
+     */
     private double amount;
+
+    /**
+     * Currency code ISO 4217
+     */
     private String currencyCode;
+
+    /**
+     * Date time when the operation has been executed
+     */
     private Date dateValue;
+
+    /**
+     * Date time when the operation has been authorized (date of the payment)
+     */
     private Date dateOperation;
+
     /**
      * Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
      */
     private String label;
+
     /**
      * Limited to {@link #DETAILS_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
      */
     private String details;
+
     private final List<PaymentDto> payments;
     private final List<FileDto> files;
     private final List<ItemDto> items;
