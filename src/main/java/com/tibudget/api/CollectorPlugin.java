@@ -47,6 +47,17 @@ public interface CollectorPlugin {
 	List<MessageDto> validate();
 
 	/**
+	 * Called just before collect(), usefull for abstract classes to perform authentification for exemple.
+	 * @throws CollectError if an error occurs during the collect process (e.g., parsing issues).
+	 * @throws AccessDeny if access is denied due to incorrect credentials.
+	 * @throws TemporaryUnavailable if the target website is temporarily unavailable (e.g., maintenance mode).
+	 * @throws ConnectionFailure if the connection to the website fails due to network issues.
+	 * @throws ParameterError if one or more provided parameters are incorrect.
+	 */
+	void beforeCollect()
+			throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
+
+	/**
 	 * Initiates the data collect process after successful validation.
 	 *
 	 * @param existingAccounts a collection of accounts that were previously collected by this plugin.
