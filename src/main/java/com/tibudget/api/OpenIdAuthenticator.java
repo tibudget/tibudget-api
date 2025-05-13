@@ -7,12 +7,5 @@ import com.tibudget.api.exceptions.TemporaryUnavailable;
 
 public interface OpenIdAuthenticator {
 
-    void setConfiguration(String jsonConfiguration);
-
-    String getConfiguration();
-
-    void authenticate() throws AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
-
-    String getParameter(String key);
-
+    String authenticate(String jsonConfiguration) throws AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
 }
