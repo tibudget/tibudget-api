@@ -8,8 +8,10 @@ import java.util.Map;
  * Interface defining a secure and controlled HTTP communication bridge
  * for dynamically loaded collector plugins.
  * <p>
- * All requests are subject to domain whitelisting and logging, and are executed
- * outside of the plugin sandbox process to ensure network isolation and security.
+ * Implementations may modify the provided headers and cookies maps
+ * to reflect changes based on the HTTP response (e.g. setting new cookies,
+ * tracking headers, etc.). Therefore, callers must ensure these maps are
+ * mutable (e.g. HashMap).
  */
 public interface InternetProvider {
 
@@ -17,8 +19,8 @@ public interface InternetProvider {
      * Performs an HTTP GET request.
      *
      * @param url     Full URL to request.
-     * @param headers Optional HTTP headers.
-     * @param cookies Optional HTTP cookies (name → value).
+     * @param headers Modifiable map of headers. Will be read and may be updated.
+     * @param cookies Modifiable map of cookies. Will be sent and may be updated from response.
      * @return The response body as a raw String.
      * @throws IOException on failure (network error, unauthorized domain, etc.)
      */
@@ -29,8 +31,8 @@ public interface InternetProvider {
      *
      * @param url     Full URL to post to.
      * @param body    The request body, typically a JSON or form string.
-     * @param headers Optional HTTP headers.
-     * @param cookies Optional HTTP cookies (name → value).
+     * @param headers Modifiable map of headers. Will be read and may be updated.
+     * @param cookies Modifiable map of cookies. Will be sent and may be updated from response.
      * @return The response body as a raw String.
      * @throws IOException on failure.
      */
@@ -41,8 +43,8 @@ public interface InternetProvider {
      *
      * @param url         The URL of the file to download.
      * @param destination The destination file to write the content into.
-     * @param headers     Optional headers to include in the request.
-     * @param cookies     Optional cookies to include in the request.
+     * @param headers     Modifiable map of headers. Will be read and may be updated.
+     * @param cookies     Modifiable map of cookies. Will be sent and may be updated from response.
      * @throws IOException on failure (invalid destination, network error, etc.)
      */
     void downloadFile(String url, File destination, Map<String, String> headers, Map<String, String> cookies) throws IOException;
