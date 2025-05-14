@@ -50,11 +50,21 @@ public interface InternetProvider {
      * Represents an HTTP response including body, headers, and cookies.
      */
     class Response {
+        public final int code;
+        public final String message;
+        public final String method;
+        public final String location;
+        public final String protocol;
         public final String body;
         public final Map<String, String> headers;
         public final Map<String, String> cookies;
 
-        public Response(String body, Map<String, String> headers, Map<String, String> cookies) {
+        public Response(int code, String message, String method, String location, String protocol, String body, Map<String, String> headers, Map<String, String> cookies) {
+            this.code = code;
+            this.message = message;
+            this.method = method;
+            this.location = location;
+            this.protocol = protocol;
             this.body = body;
             this.headers = headers;
             this.cookies = cookies;
