@@ -1,6 +1,5 @@
 package com.tibudget.api;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -8,10 +7,8 @@ import java.util.Map;
  * Interface defining a secure and controlled HTTP communication bridge
  * for dynamically loaded collector plugins.
  * <p>
- * Implementations may modify the provided headers and cookies maps
- * to reflect changes based on the HTTP response (e.g. setting new cookies,
- * tracking headers, etc.). Therefore, callers must ensure these maps are
- * mutable (e.g. HashMap).
+ * All requests are subject to domain whitelisting and logging, and are executed
+ * outside of the plugin sandbox process to ensure network isolation and security.
  */
 public interface InternetProvider {
 
@@ -19,33 +16,48 @@ public interface InternetProvider {
      * Performs an HTTP GET request.
      *
      * @param url     Full URL to request.
-     * @param headers Modifiable map of headers. Will be read and may be updated.
-     * @param cookies Modifiable map of cookies. Will be sent and may be updated from response.
-     * @return The response body as a raw String.
+     * @param headers Optional HTTP headers.
+     * @param cookies Optional HTTP cookies (name → value).
+     * @return The response including body, headers, and cookies.
      * @throws IOException on failure (network error, unauthorized domain, etc.)
      */
-    String get(String url, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+    Response get(String url, Map<String, String> headers, Map<String, String> cookies) throws IOException;
 
     /**
      * Performs an HTTP POST request with a text payload.
      *
      * @param url     Full URL to post to.
      * @param body    The request body, typically a JSON or form string.
-     * @param headers Modifiable map of headers. Will be read and may be updated.
-     * @param cookies Modifiable map of cookies. Will be sent and may be updated from response.
-     * @return The response body as a raw String.
+     * @param headers Optional HTTP headers.
+     * @param cookies Optional HTTP cookies (name → value).
+     * @return The response including body, headers, and cookies.
      * @throws IOException on failure.
      */
-    String post(String url, String body, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+    Response post(String url, String body, Map<String, String> headers, Map<String, String> cookies) throws IOException;
 
     /**
-     * Downloads a file from a URL and saves it to the specified destination.
+     * Downloads a file from a URL and saves it to a destination given in the response body. The type of file will be automatically determined.
      *
      * @param url         The URL of the file to download.
-     * @param destination The destination file to write the content into.
-     * @param headers     Modifiable map of headers. Will be read and may be updated.
-     * @param cookies     Modifiable map of cookies. Will be sent and may be updated from response.
+     * @param headers     Optional headers to include in the request.
+     * @param cookies     Optional cookies to include in the request.
+     * @return The response including body (the full path where the file has been stored), headers, and cookies.
      * @throws IOException on failure (invalid destination, network error, etc.)
      */
-    void downloadFile(String url, File destination, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+    Response downloadFile(String url, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+
+    /**
+     * Represents an HTTP response including body, headers, and cookies.
+     */
+    class Response {
+        public final String body;
+        public final Map<String, String> headers;
+        public final Map<String, String> cookies;
+
+        public Response(String body, Map<String, String> headers, Map<String, String> cookies) {
+            this.body = body;
+            this.headers = headers;
+            this.cookies = cookies;
+        }
+    }
 }
