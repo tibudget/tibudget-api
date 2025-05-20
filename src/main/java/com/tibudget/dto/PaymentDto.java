@@ -47,7 +47,12 @@ public class PaymentDto implements Serializable {
         /**
          * Payment made using a digital wallet (e.g., Google Pay, Apple Pay, PayPal, Samsung Pay).
          */
-        DIGITAL_WALLET
+        DIGITAL_WALLET,
+
+        /**
+         * Discount applied to the invoice
+         */
+        DISCOUNT,
     }
 
     /**
@@ -158,5 +163,18 @@ public class PaymentDto implements Serializable {
 
     public void setPaymentMethodReference(String paymentMethodReference) {
         this.paymentMethodReference = paymentMethodReference;
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentDto{" +
+                "type=" + type +
+                ", paymentDate=" + paymentDate +
+                ", amount=" + amount +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", reference='" + reference + '\'' +
+                ", paymentMethodReference='" + paymentMethodReference + '\'' +
+                ", providerName='" + providerName + '\'' +
+                '}';
     }
 }

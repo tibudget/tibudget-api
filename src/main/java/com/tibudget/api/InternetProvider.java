@@ -1,6 +1,7 @@
 package com.tibudget.api;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -49,7 +50,7 @@ public interface InternetProvider {
     /**
      * Represents an HTTP response including body, headers, and cookies.
      */
-    class Response {
+    class Response implements Serializable {
         public final int code;
         public final String message;
         public final String method;

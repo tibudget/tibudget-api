@@ -74,7 +74,56 @@ public class ItemDto implements Serializable {
     /**
      * Quantity of items
      */
-    private int quantity;
+    private double quantity;
+
+    /**
+     * Minimal and universal set of quantity units.
+     * This enum is designed to support a wide range of products while remaining simple and standardized.
+     */
+    public enum QuantityUnit {
+
+        /**
+         * Countable items (e.g., 1 item, 3 apples, 10 tickets).
+         */
+        UNIT,
+
+        /**
+         * Mass in grams. All weight-based quantities should be converted to grams.
+         */
+        GRAM,
+
+        /**
+         * Volume in liters. All liquid or volumetric quantities should be converted to liters.
+         */
+        LITER,
+
+        /**
+         * Length in meters. Suitable for fabric, cables, etc.
+         */
+        METER,
+
+        /**
+         * Surface area in square meters (m²). Used for tiles, land, etc.
+         */
+        SQUARE_METER,
+
+        /**
+         * Volume in cubic meters (m³). Used for bulk goods like sand, wood, etc.
+         */
+        CUBIC_METER,
+
+        /**
+         * Time in hours. Useful for services or time-based usage (e.g., parking, rentals).
+         */
+        HOUR,
+
+        /**
+         * Fallback unit for unknown or custom measurements.
+         */
+        OTHER
+    }
+
+    private QuantityUnit quantityUnit = QuantityUnit.UNIT;
 
     /**
      * References of the item, try to add at least one reference
@@ -91,11 +140,12 @@ public class ItemDto implements Serializable {
         references = new HashMap<>();
     }
 
-    public ItemDto(String label, double price, int quantity) {
+    public ItemDto(String label, double price, double quantity, QuantityUnit quantityUnit) {
         this();
         this.label = label;
         this.price = price;
         this.quantity = quantity;
+        this.quantityUnit = quantityUnit;
     }
 
     public String getLabel() {
@@ -114,12 +164,25 @@ public class ItemDto implements Serializable {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
+    }
+
+    public void setQuantity(double quantity, QuantityUnit quantityUnit) {
+        this.quantity = quantity;
+        this.quantityUnit = quantityUnit;
+    }
+
+    public QuantityUnit getQuantityUnit() {
+        return quantityUnit;
+    }
+
+    public void setQuantityUnit(QuantityUnit quantityUnit) {
+        this.quantityUnit = quantityUnit;
     }
 
     public URL getUrl() {
@@ -146,5 +209,13 @@ public class ItemDto implements Serializable {
         this.references.put(type, reference);
     }
 
-
+    @Override
+    public String toString() {
+        return "ItemDto{" +
+                "label='" + label + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", quantityUnit=" + quantityUnit +
+                '}';
+    }
 }

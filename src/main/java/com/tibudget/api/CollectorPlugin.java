@@ -46,15 +46,13 @@ public interface CollectorPlugin {
     /**
      * Initiates the data collect process after successful validation.
      *
-     * @param existingAccounts a collection of accounts that were previously collected by this plugin.
      * @throws CollectError         if an error occurs during the collect process (e.g., parsing issues).
      * @throws AccessDeny           if access is denied due to incorrect credentials.
      * @throws TemporaryUnavailable if the target website is temporarily unavailable (e.g., maintenance mode).
      * @throws ConnectionFailure    if the connection to the website fails due to network issues.
      * @throws ParameterError       if one or more provided parameters are incorrect.
      */
-    void collect(Iterable<AccountDto> existingAccounts)
-            throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
+    void collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
 
     /**
      * Retrieves the cookies to be stored after a collect session.

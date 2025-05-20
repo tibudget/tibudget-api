@@ -167,6 +167,7 @@ public class OperationDto implements Serializable {
      */
     public List<PaymentDto> getPayments() { return Collections.unmodifiableList(payments); }
     public void addPayment(PaymentDto payment) { this.payments.add(payment); }
+    public void addPayments(List<PaymentDto> payments) { this.payments.addAll(payments); }
 
     /**
      * Returns an unmodifiable list of files linked to this operation.
@@ -183,6 +184,7 @@ public class OperationDto implements Serializable {
      */
     public List<ItemDto> getItems() { return Collections.unmodifiableList(items); }
     public void addItem(ItemDto item) { this.items.add(item); }
+    public void addItems(List<ItemDto> items) { this.items.addAll(items); }
 
     /**
      * Returns the metadata map.

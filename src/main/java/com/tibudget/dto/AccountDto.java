@@ -234,6 +234,18 @@ public class AccountDto implements Serializable {
         }
     }
 
+    public boolean hasLoyaltyCard(String reference) {
+        if (loyaltyCards == null || reference == null) {
+            return false;
+        }
+        for (LoyaltyCardDto card : loyaltyCards) {
+            if (reference.equals(card.getReference())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true; // Compare by reference

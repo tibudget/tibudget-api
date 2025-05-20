@@ -13,6 +13,7 @@ public class FileDto implements Serializable {
     public enum FileDtoType {
         IMAGE,
         INVOICE,
+        RECEIPT,
         CONTRACT,
         NOTICE,
         OTHER
