@@ -19,10 +19,11 @@ public interface CollectorPlugin {
      *
      * @param internetProvider The bridge to use to connect to the internet. This ensure high level of security since you will only be able to connect to the domain names that you declared when you registered your collector.
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
+     * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected operation in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
-    void init(InternetProvider internetProvider, OTPProvider otpProvider, Map<String, String> previousCookies, List<AccountDto> previousAccounts);
+    void init(InternetProvider internetProvider, OTPProvider otpProvider, PDFToolsProvider pdfToolsProvider, Map<String, String> previousCookies, List<AccountDto> previousAccounts);
 
     /**
      * JSON configuration to connect to openid server as it is done in AppAuth demo application
