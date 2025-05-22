@@ -29,12 +29,13 @@ public interface InternetProvider {
      *
      * @param url     Full URL to post to.
      * @param body    The request body, typically a JSON or form string.
+     * @param contentType Content type of the body
      * @param headers Optional HTTP headers.
      * @param cookies Optional HTTP cookies (name → value).
      * @return The response including body, headers, and cookies.
      * @throws IOException on failure.
      */
-    Response post(String url, String body, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+    Response post(String url, String body, String contentType, Map<String, String> headers, Map<String, String> cookies) throws IOException;
 
     /**
      * Downloads a file from a URL and saves it to a destination given in the response body. The type of file will be automatically determined.
