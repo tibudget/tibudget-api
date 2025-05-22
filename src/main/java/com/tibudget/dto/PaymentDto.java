@@ -47,12 +47,7 @@ public class PaymentDto implements Serializable {
         /**
          * Payment made using a digital wallet (e.g., Google Pay, Apple Pay, PayPal, Samsung Pay).
          */
-        DIGITAL_WALLET,
-
-        /**
-         * Discount applied to the invoice
-         */
-        DISCOUNT,
+        DIGITAL_WALLET
     }
 
     /**
