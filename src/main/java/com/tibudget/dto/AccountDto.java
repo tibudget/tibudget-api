@@ -272,4 +272,20 @@ public class AccountDto implements Serializable {
         // Use default hashCode if UUID is not defined defined
         return super.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "AccountDto{" +
+                "uuid='" + uuid + '\'' +
+                ", type=" + type +
+                ", label='" + label + '\'' +
+                ", providerName='" + providerName + '\'' +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", currentBalance=" + currentBalance +
+                ", metadatas=" + metadatas +
+                ", lastUpdate=" + lastUpdate +
+                ", paymentMethods=" + paymentMethods +
+                ", loyaltyCards=" + loyaltyCards +
+                '}';
+    }
 }

@@ -217,4 +217,22 @@ public class OperationDto implements Serializable {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "OperationDto{" +
+                "accountUuid='" + accountUuid + '\'' +
+                ", type=" + type +
+                ", metadatas=" + metadatas +
+                ", amount=" + amount +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", dateValue=" + dateValue +
+                ", dateOperation=" + dateOperation +
+                ", label='" + label + '\'' +
+                ", details='" + details + '\'' +
+                ", payments=" + payments +
+                ", files=" + files +
+                ", items=" + items +
+                '}';
+    }
 }

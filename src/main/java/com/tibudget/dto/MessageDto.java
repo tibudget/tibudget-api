@@ -95,4 +95,14 @@ public class MessageDto implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "MessageDto{" +
+				"type=" + type +
+				", messageArguments=" + Arrays.toString(messageArguments) +
+				", messageKey='" + messageKey + '\'' +
+				", fieldName='" + fieldName + '\'' +
+				'}';
+	}
 }

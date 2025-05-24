@@ -92,4 +92,14 @@ public class LoyaltyCardDto implements Serializable {
     public void setIssuer(String issuer) {
         this.issuer = issuer;
     }
+
+    @Override
+    public String toString() {
+        return "LoyaltyCardDto{" +
+                "reference='" + reference + '\'' +
+                ", barcodeType=" + barcodeType +
+                ", issuer='" + issuer + '\'' +
+                ", cover=" + cover +
+                '}';
+    }
 }

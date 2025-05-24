@@ -71,4 +71,13 @@ public class FileDto implements Serializable {
     public void setFile(File file) {
         this.file = file;
     }
+
+    @Override
+    public String toString() {
+        return "FileDto{" +
+                "type=" + type +
+                ", label='" + label + '\'' +
+                ", file=" + file +
+                '}';
+    }
 }

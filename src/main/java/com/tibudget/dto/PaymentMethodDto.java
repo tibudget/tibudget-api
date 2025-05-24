@@ -45,4 +45,12 @@ public class PaymentMethodDto implements Serializable {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+    @Override
+    public String toString() {
+        return "PaymentMethodDto{" +
+                "type=" + type +
+                ", reference='" + reference + '\'' +
+                '}';
+    }
 }
