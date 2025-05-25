@@ -219,6 +219,18 @@ public class OperationDto implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof OperationDto)) return false;
+        OperationDto that = (OperationDto) o;
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateOperation, that.dateOperation) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateOperation, label, details, payments, files, items);
+    }
+
+    @Override
     public String toString() {
         return "OperationDto{" +
                 "accountUuid='" + accountUuid + '\'' +

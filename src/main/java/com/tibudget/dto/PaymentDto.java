@@ -2,6 +2,7 @@ package com.tibudget.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents a payment transaction with details such as type, amount, currency, and references.
@@ -158,6 +159,18 @@ public class PaymentDto implements Serializable {
 
     public void setPaymentMethodReference(String paymentMethodReference) {
         this.paymentMethodReference = paymentMethodReference;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PaymentDto)) return false;
+        PaymentDto that = (PaymentDto) o;
+        return Double.compare(amount, that.amount) == 0 && type == that.type && Objects.equals(providerName, that.providerName) && Objects.equals(paymentDate, that.paymentDate) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(reference, that.reference) && Objects.equals(paymentMethodReference, that.paymentMethodReference);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, providerName, paymentDate, amount, currencyCode, reference, paymentMethodReference);
     }
 
     @Override

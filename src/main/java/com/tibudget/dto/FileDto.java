@@ -2,6 +2,7 @@ package com.tibudget.dto;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class FileDto implements Serializable {
 
@@ -70,6 +71,18 @@ public class FileDto implements Serializable {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof FileDto)) return false;
+        FileDto fileDto = (FileDto) o;
+        return type == fileDto.type && Objects.equals(label, fileDto.label) && Objects.equals(file, fileDto.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, label, file);
     }
 
     @Override

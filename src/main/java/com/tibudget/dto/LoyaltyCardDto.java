@@ -1,6 +1,7 @@
 package com.tibudget.dto;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Data Transfer Object representing a loyalty card.
@@ -91,6 +92,18 @@ public class LoyaltyCardDto implements Serializable {
 
     public void setIssuer(String issuer) {
         this.issuer = issuer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LoyaltyCardDto)) return false;
+        LoyaltyCardDto that = (LoyaltyCardDto) o;
+        return Objects.equals(reference, that.reference) && barcodeType == that.barcodeType && Objects.equals(issuer, that.issuer) && Objects.equals(cover, that.cover);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reference, barcodeType, issuer, cover);
     }
 
     @Override

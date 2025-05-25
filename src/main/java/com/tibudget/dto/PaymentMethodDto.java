@@ -1,6 +1,7 @@
 package com.tibudget.dto;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class PaymentMethodDto implements Serializable {
 
@@ -44,6 +45,18 @@ public class PaymentMethodDto implements Serializable {
     }
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PaymentMethodDto)) return false;
+        PaymentMethodDto that = (PaymentMethodDto) o;
+        return type == that.type && Objects.equals(reference, that.reference);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, reference);
     }
 
     @Override
