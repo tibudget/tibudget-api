@@ -43,10 +43,12 @@ public interface InternetProvider {
      * @param url         The URL of the file to download.
      * @param headers     Optional headers to include in the request.
      * @param cookies     Optional cookies to include in the request.
+     * @param forceContentType Expected mime type of the document, e.g. "application/pdf". It is highly recommanded to
+     *                         define it but if you don't the app will try to guess it (maybe wrong).
      * @return The response including body (the full path where the file has been stored), headers, and cookies.
      * @throws IOException on failure (invalid destination, network error, etc.)
      */
-    Response downloadFile(String url, Map<String, String> headers, Map<String, String> cookies) throws IOException;
+    Response downloadFile(String url, Map<String, String> headers, Map<String, String> cookies, String forceContentType) throws IOException;
 
     /**
      * Represents an HTTP response including body, headers, and cookies.
