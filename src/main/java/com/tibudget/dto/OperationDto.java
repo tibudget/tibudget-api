@@ -91,6 +91,11 @@ public class OperationDto implements Serializable {
      */
     private String details;
 
+    /**
+     * Where this operation was done (physical place or internet)
+     */
+    private LocationInfosDto locationInfos;
+
     private final List<PaymentDto> payments;
     private final List<FileDto> files;
     private final List<ItemDto> items;
@@ -218,16 +223,24 @@ public class OperationDto implements Serializable {
         }
     }
 
+    public LocationInfosDto getLocationInfos() {
+        return locationInfos;
+    }
+
+    public void setLocationInfos(LocationInfosDto locationInfos) {
+        this.locationInfos = locationInfos;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OperationDto)) return false;
         OperationDto that = (OperationDto) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateOperation, that.dateOperation) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateOperation, that.dateOperation) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateOperation, label, details, payments, files, items);
+        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateOperation, label, details, locationInfos, payments, files, items);
     }
 
     @Override
@@ -242,6 +255,7 @@ public class OperationDto implements Serializable {
                 ", dateOperation=" + dateOperation +
                 ", label='" + label + '\'' +
                 ", details='" + details + '\'' +
+                ", locationInfos=" + locationInfos +
                 ", payments=" + payments +
                 ", files=" + files +
                 ", items=" + items +

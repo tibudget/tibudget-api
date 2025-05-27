@@ -53,27 +53,6 @@ public class ItemDto implements Serializable {
     }
 
     /**
-     * You should at least add an image to illustrate the product. You can also add contract or other related files for
-     * this item.
-     */
-    private final List<FileDto> files;
-
-    /**
-     * The label of this item
-     */
-    private String label;
-
-    /**
-     * The total price of this item, meaning if there are 3 in quantity the price is for the 3 items
-     */
-    private double price;
-
-    /**
-     * Quantity of items
-     */
-    private double quantity;
-
-    /**
      * Minimal and universal set of quantity units.
      * This enum is designed to support a wide range of products while remaining simple and standardized.
      */
@@ -120,6 +99,32 @@ public class ItemDto implements Serializable {
         OTHER
     }
 
+    /**
+     * You should at least add an image to illustrate the product. You can also add contract or other related files for
+     * this item.
+     */
+    private final List<FileDto> files;
+
+    /**
+     * The label of this item
+     */
+    private String label;
+
+    /**
+     * The brand of the product or the provider of the service
+     */
+    private String brand;
+
+    /**
+     * The total price of this item, meaning if there are 3 in quantity the price is for the 3 items
+     */
+    private double price;
+
+    /**
+     * Quantity of items
+     */
+    private double quantity;
+
     private QuantityUnit quantityUnit = QuantityUnit.UNIT;
 
     /**
@@ -151,6 +156,14 @@ public class ItemDto implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public double getPrice() {

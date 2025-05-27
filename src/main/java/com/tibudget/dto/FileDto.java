@@ -7,7 +7,7 @@ import java.util.Objects;
  * Represents a file to be transmitted between the collector and the Android app.
  *
  * <p>The content must be provided as a temporary file, created either by downloading via InternetProvider
- * or by loading a resource from the classpath.</p>
+ * or by creating it with File.createTempFile().</p>
  *
  * <p>The maximum file size is limited to {@link #MAX_SIZE_BYTES}.</p>
  */
@@ -63,66 +63,10 @@ public class FileDto implements Serializable {
     }
 
     /**
-     * Constructs a FileDto by loading a resource from the classpath
-     * and writing it to a temporary file.
-     *
-     * @param type         Type of the file (IMAGE, INVOICE, etc.)
-     * @param label        Label for the file
-     * @param contentType  MIME type (e.g. "image/png")
-     * @param resourcePath Path to the resource in the classpath (e.g. "/images/logo.png")
-     * @throws IOException If the resource is not found, unreadable, or too large
-     */
-    public FileDto(FileDtoType type, String label, String contentType, String resourcePath) throws IOException {
-        this();
-        this.type = type;
-        this.label = label;
-        this.contentType = contentType;
-
-        try (InputStream inputStream = FileDto.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                throw new FileNotFoundException("Resource not found: " + resourcePath);
-            }
-
-            // Create a temp file with correct extension
-            String extension = resourcePath.contains(".") ?
-                    resourcePath.substring(resourcePath.lastIndexOf(".")) : ".tmp";
-            File tempFile = File.createTempFile("tibu_stubbed_", extension);
-
-            try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-                byte[] buffer = new byte[1024];
-                int totalBytes = 0;
-                int length;
-
-                while ((length = inputStream.read(buffer)) > 0) {
-                    totalBytes += length;
-                    if (totalBytes > MAX_SIZE_BYTES) {
-                        throw new IOException("Resource " + resourcePath + " exceeds max allowed size of " + MAX_SIZE_BYTES + " bytes");
-                    }
-                    outputStream.write(buffer, 0, length);
-                }
-            }
-
-            this.file = tempFile;
-        }
-    }
-
-    /**
-     * Constructs a FileDto from a resource, inferring its MIME type.
-     *
-     * @param type         Type of the file
-     * @param label        Label for the file
-     * @param resourcePath Path to the resource in the classpath
-     * @throws IOException If the resource cannot be read or exceeds allowed size
-     */
-    public FileDto(FileDtoType type, String label, String resourcePath) throws IOException {
-        this(type, label, detectMimeTypeFromExtension(resourcePath), resourcePath);
-    }
-
-    /**
      * Tries to guess the MIME type from the file extension.
      */
-    private static String detectMimeTypeFromExtension(String resourcePath) {
-        String lower = resourcePath.toLowerCase();
+    private static String detectMimeTypeFromExtension(String filePath) {
+        String lower = filePath.toLowerCase();
         if (lower.endsWith(".png")) return "image/png";
         if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
         if (lower.endsWith(".webp")) return "image/webp";
