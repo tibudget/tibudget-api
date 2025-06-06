@@ -5,6 +5,7 @@ import com.tibudget.dto.AccountDto;
 import com.tibudget.dto.MessageDto;
 import com.tibudget.dto.OperationDto;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,20 @@ public interface CollectorPlugin {
      * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected operation in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
-    void init(InternetProvider internetProvider, OTPProvider otpProvider, PDFToolsProvider pdfToolsProvider, Map<String, String> previousCookies, List<AccountDto> previousAccounts);
+    void init(InternetProvider internetProvider,
+              OTPProvider otpProvider,
+              PDFToolsProvider pdfToolsProvider,
+              Map<String, String> settings,
+              Map<String, String> previousCookies,
+              List<AccountDto> previousAccounts);
+
+    /**
+     * TODO Improve this doc
+     * Called when a callback URL is received
+     * @param callbackUri The full URI received by tibu at the end of the conection flow
+     * @return The title of the configuration (bank/shop name + first name of the account for example)
+     */
+    String initConnection(URI callbackUri);
 
     /**
      * JSON configuration to connect to openid server as it is done in AppAuth demo application
@@ -54,6 +68,13 @@ public interface CollectorPlugin {
      * @throws ParameterError       if one or more provided parameters are incorrect.
      */
     void collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
+
+    /**
+     * Retrieves the settings to be stored after a collect or connection.
+     *
+     * @return a map containing settings usefull for the collector.
+     */
+    Map<String, String> getSettings();
 
     /**
      * Retrieves the cookies to be stored after a collect session.
