@@ -15,25 +15,25 @@ public class AccountDto implements Serializable {
      */
     public enum AccountDtoType {
         /**
-         * Accounts that can be used for payments. These accounts will be checked when linking operations
-         * of type {@link com.tibudget.dto.OperationDto.OperationDtoType#PURCHASE}.
+         * Accounts that can be used for payments. These accounts will be checked when linking transactions
+         * of type {@link TransactionDto.TransactionDtoType#PURCHASE}.
          */
         PAYMENT,
 
         /**
-         * Accounts that only store money. These accounts are not allowed to have operations
-         * of type {@link com.tibudget.dto.OperationDto.OperationDtoType#PURCHASE}.
+         * Accounts that only store money. These accounts are not allowed to have transactions
+         * of type {@link TransactionDto.TransactionDtoType#PURCHASE}.
          */
         SAVING,
 
         /**
-         * Accounts used to represent a loan or credit. These accounts are not allowed to have operations
-         * of type {@link com.tibudget.dto.OperationDto.OperationDtoType#PURCHASE}.
+         * Accounts used to represent a loan or credit. These accounts are not allowed to have transactions
+         * of type {@link TransactionDto.TransactionDtoType#PURCHASE}.
          */
         LOAN,
 
         /**
-         * Accounts representing online or physical shops. Any account that contains PURCHASE operations
+         * Accounts representing online or physical shops. Any account that contains PURCHASE transactions
          * falls into this category.
          */
         SHOPPING,

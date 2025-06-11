@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Data Transfer Object representing a financial operation.
- * It contains essential information about an operation, such as its type, amount, dates, and associated metadata.
+ * Data Transfer Object representing a financial transaction.
+ * It contains essential information about an transaction, such as its type, amount, dates, and associated metadata.
  */
-public class OperationDto implements Serializable {
+public class TransactionDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,51 +15,61 @@ public class OperationDto implements Serializable {
     public static final int DETAILS_MAX_LENGTH = 1000;
 
     /**
-     * Represents the type of a financial operation, which is essential for linking related operations.
+     * Represents the type of a financial transaction, which is essential for linking related transactions.
      */
-    public enum OperationDtoType {
+    public enum TransactionDtoType {
         /**
          * A purchase transaction, representing a payment made at a store (either online or physical).
-         * This type of operation is always linked to a {@link #PAYMENT} operation.
+         * This type of transaction is always linked to a {@link #PAYMENT} transaction.
          */
         PURCHASE,
 
         /**
          * A payment transaction, representing a withdrawal from a bank account.
-         * This type of operation is always linked to a {@link #PURCHASE} operation.
+         * This type of transaction is always linked to a {@link #PURCHASE} transaction.
          */
         PAYMENT,
 
         /**
-         * A money transfer between accounts. This type of operation is always linked to another {@link #TRANSFER}
-         * operation.
+         * A money transfer between accounts. This type of transaction is always linked to another {@link #TRANSFER}
+         * transaction.
          */
         TRANSFER,
 
         /**
-         * An internal operation applied by the account provider, such as bank fees, interest, or other adjustments.
-         * This type of operation is never linked to any other operation.
+         * An internal transaction applied by the account provider, such as bank fees, interest, or other adjustments.
+         * This type of transaction is never linked to any other transaction.
          */
         INTERNAL,
     }
 
-    /** Common metadata keys : IBAN of the destinataire of a transfert */
-    public static final String METADATA_DEST_IBAN = "DEST_IBAN";
-    /** Common metadata keys : Reference of this operation (transaction ID for exemple) */
+    /** Common metadata keys : Reference of this transaction (transaction ID for exemple) */
     public static final String METADATA_REFERENCE = "REFERENCE";
-    /** Common metadata keys : if available and applicable, provide the merchant name */
-    public static final String METADATA_MERCHANT_NAME = "MERCHANT_NAME";
-    /** Common metadata keys : if available and applicable, provide the merchant website */
-    public static final String METADATA_MERCHANT_WEBSITE = "MERCHANT_WEBSITE";
+    /** Common metadata keys : IBAN of the counterparty if available */
+    public static final String METADATA_COUNTERPARTY_IBAN = "COUNTERPARTY_IBAN";
+    /** Common metadata keys : if available and applicable, provide the merchant or other counterparty name */
+    public static final String METADATA_COUNTERPARTY_NAME = "COUNTERPARTY_NAME";
+    /** Common metadata keys : if available and applicable, provide the merchant or other counterparty  website */
+    public static final String METADATA_COUNTERPARTY_WEBSITE = "COUNTERPARTY_WEBSITE";
     /** Common metadata keys : if available and applicable, provide the check number */
     public static final String METADATA_CHECK_NUMBER = "CHECK_NUMBER";
 
+    /**
+     * Unique identifier for this transaction within the associated account.
+     * This ID is used as a key for subsequent transaction updates.
+     */
+    private String id;
+
+    /**
+     * Represents the unique identifier (UUID) for the account associated
+     * with the transaction.
+     */
     private String accountUuid;
-    private OperationDtoType type;
+    private TransactionDtoType type;
     private final Map<String, String> metadatas;
 
     /**
-     * The amount of an operation should be negative for PURCHASE or PAYMENT transactions,
+     * The amount of a transaction should be negative for PURCHASE or PAYMENT transactions,
      * except in the case of a refund.
      * This ensures that amounts are displayed from the user's perspective:
      * negative values represent expenses, while positive values indicate credits.
@@ -72,14 +82,14 @@ public class OperationDto implements Serializable {
     private String currencyCode;
 
     /**
-     * Date time when the operation has been executed
+     * Date time when the transaction has been executed
      */
     private Date dateValue;
 
     /**
-     * Date time when the operation has been authorized (date of the payment)
+     * Date time when the transaction has been authorized (date of the payment)
      */
-    private Date dateOperation;
+    private Date dateTransaction;
 
     /**
      * Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
@@ -92,7 +102,7 @@ public class OperationDto implements Serializable {
     private String details;
 
     /**
-     * Where this operation was done (physical place or internet)
+     * Where this transaction was done (physical place or internet)
      */
     private LocationInfosDto locationInfos;
 
@@ -103,7 +113,7 @@ public class OperationDto implements Serializable {
     /**
      * Default constructor initializing lists and metadata map.
      */
-    public OperationDto() {
+    public TransactionDto() {
         this.metadatas = new HashMap<>();
         this.files = new ArrayList<>();
         this.items = new ArrayList<>();
@@ -111,21 +121,23 @@ public class OperationDto implements Serializable {
     }
 
     /**
-     * Constructs an OperationDto with mandatory details.
+     * Constructs a TransactionDto with mandatory details.
      *
-     * @param accountUuid   UUID of the account for this operation.
-     * @param type          Type of operation.
-     * @param dateOperation Operation date (when the bank processes the operation).
-     * @param dateValue     Value date (when the user performed the operation).
-     * @param label         Label of the operation.
-     * @param details       Details of the operation.
-     * @param amount        Amount of the operation.
+     * @param id              ID of the transaction, it must be unique for this transaction within the associated account
+     * @param accountUuid     UUID of the account associated to this transaction.
+     * @param type            Type of transaction.
+     * @param dateTransaction Transaction date (when the user performed the transaction).
+     * @param dateValue       Value date (when the bank processes the transaction).
+     * @param label           Label of the transaction.
+     * @param details         Details of the transaction.
+     * @param amount          Amount of the transaction.
      */
-    public OperationDto(String accountUuid, OperationDtoType type, Date dateOperation, Date dateValue,
-                        String label, String details, double amount) {
+    public TransactionDto(String id, String accountUuid, TransactionDtoType type, Date dateTransaction, Date dateValue,
+                          String label, String details, double amount) {
         this();
+        this.id = id;
         this.accountUuid = accountUuid;
-        this.dateOperation = dateOperation;
+        this.dateTransaction = dateTransaction;
         this.dateValue = dateValue;
         this.details = details;
         this.label = label;
@@ -136,8 +148,8 @@ public class OperationDto implements Serializable {
     public String getAccountUuid() { return accountUuid; }
     public void setAccountUuid(String accountUuid) { this.accountUuid = accountUuid; }
 
-    public Date getDateOperation() { return dateOperation; }
-    public void setDateOperation(Date dateOperation) { this.dateOperation = dateOperation; }
+    public Date getDateTransaction() { return dateTransaction; }
+    public void setDateTransaction(Date dateTransaction) { this.dateTransaction = dateTransaction; }
 
     public Date getDateValue() { return dateValue; }
     public void setDateValue(Date dateValue) { this.dateValue = dateValue; }
@@ -156,8 +168,8 @@ public class OperationDto implements Serializable {
      */
     public void setLabel(String label) { this.label = label; }
 
-    public OperationDtoType getType() { return type; }
-    public void setType(OperationDtoType type) { this.type = type; }
+    public TransactionDtoType getType() { return type; }
+    public void setType(TransactionDtoType type) { this.type = type; }
 
     public double getAmount() { return amount; }
     public void setAmount(double amount) { this.amount = amount; }
@@ -166,7 +178,7 @@ public class OperationDto implements Serializable {
     public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 
     /**
-     * Returns an unmodifiable list of payments linked to this operation.
+     * Returns an unmodifiable list of payments linked to this transaction.
      *
      * @return List of payments.
      */
@@ -175,7 +187,7 @@ public class OperationDto implements Serializable {
     public void addPayments(List<PaymentDto> payments) { this.payments.addAll(payments); }
 
     /**
-     * Returns an unmodifiable list of files linked to this operation.
+     * Returns an unmodifiable list of files linked to this transaction.
      *
      * @return List of files.
      */
@@ -183,7 +195,7 @@ public class OperationDto implements Serializable {
     public void addFile(FileDto file) { this.files.add(file); }
 
     /**
-     * Returns an unmodifiable list of items linked to this operation.
+     * Returns an unmodifiable list of items linked to this transaction.
      *
      * @return List of items.
      */
@@ -233,26 +245,27 @@ public class OperationDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof OperationDto)) return false;
-        OperationDto that = (OperationDto) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateOperation, that.dateOperation) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+        if (!(o instanceof TransactionDto)) return false;
+        TransactionDto that = (TransactionDto) o;
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateOperation, label, details, locationInfos, payments, files, items);
+        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateTransaction, label, details, locationInfos, payments, files, items);
     }
 
     @Override
     public String toString() {
-        return "OperationDto{" +
-                "accountUuid='" + accountUuid + '\'' +
+        return "TransactionDto{" +
+                "id='" + id + '\'' +
+                ", accountUuid='" + accountUuid + '\'' +
                 ", type=" + type +
                 ", metadatas=" + metadatas +
                 ", amount=" + amount +
                 ", currencyCode='" + currencyCode + '\'' +
                 ", dateValue=" + dateValue +
-                ", dateOperation=" + dateOperation +
+                ", dateTransaction=" + dateTransaction +
                 ", label='" + label + '\'' +
                 ", details='" + details + '\'' +
                 ", locationInfos=" + locationInfos +

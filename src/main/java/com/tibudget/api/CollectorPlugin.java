@@ -3,7 +3,7 @@ package com.tibudget.api;
 import com.tibudget.api.exceptions.*;
 import com.tibudget.dto.AccountDto;
 import com.tibudget.dto.MessageDto;
-import com.tibudget.dto.OperationDto;
+import com.tibudget.dto.TransactionDto;
 
 import java.net.URI;
 import java.util.List;
@@ -22,7 +22,7 @@ public interface CollectorPlugin {
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
-     * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected operation in metadatas for exemple. The label may have been modified by the user, this must be preserved.
+     * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
     void init(InternetProvider internetProvider,
               OTPProvider otpProvider,
@@ -45,6 +45,16 @@ public interface CollectorPlugin {
      * @return JSON string or null if this collector does not use OpenId to authenticate
      */
     default String getOpenIdJSONConfiguration() {
+        return null;
+    }
+
+    /**
+     * Retrieves the Datadome client ID associated with the current plugin if any. It will be used to generated the
+     * datadome cookie.
+     *
+     * @return the Datadome client ID or {@code null} if no ID is available.
+     */
+    default String getDatadomeClientId() {
         return null;
     }
 
@@ -97,9 +107,9 @@ public interface CollectorPlugin {
      * Retrieves the list of new transactions detected since the last {@link #collect(Iterable)} call.
      * Transactions should be associated with accounts present in the list returned by {@link #getAccounts()}.
      *
-     * @return an iterable collection of {@link OperationDto} representing new transactions.
+     * @return an iterable collection of {@link TransactionDto} representing new transactions.
      */
-    List<OperationDto> getOperations();
+    List<TransactionDto> getTransactions();
 
     /**
      * Retrieves the current progress of the data collect process as a percentage.

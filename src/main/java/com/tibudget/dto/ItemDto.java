@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Description of an item. This is used in PURCHASE operation.
+ * Description of an item. This is used in PURCHASE transaction.
  */
 public class ItemDto implements Serializable {
 
