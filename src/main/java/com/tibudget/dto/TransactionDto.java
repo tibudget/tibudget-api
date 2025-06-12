@@ -145,6 +145,9 @@ public class TransactionDto implements Serializable {
         this.amount = amount;
     }
 
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
     public String getAccountUuid() { return accountUuid; }
     public void setAccountUuid(String accountUuid) { this.accountUuid = accountUuid; }
 
@@ -247,12 +250,12 @@ public class TransactionDto implements Serializable {
     public boolean equals(Object o) {
         if (!(o instanceof TransactionDto)) return false;
         TransactionDto that = (TransactionDto) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(id, that.id) && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountUuid, type, metadatas, amount, currencyCode, dateValue, dateTransaction, label, details, locationInfos, payments, files, items);
+        return Objects.hash(id, accountUuid, type, metadatas, amount, currencyCode, dateValue, dateTransaction, label, details, locationInfos, payments, files, items);
     }
 
     @Override
