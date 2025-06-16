@@ -69,6 +69,12 @@ public class TransactionDto implements Serializable {
     private final Map<String, String> metadatas;
 
     /**
+     * Optional UUID of the counterparty (e.g. Paypal, Amazon, etc.)
+     * You can find it with the CounterpartyProvider if you have enough informations to find it.
+     */
+    private String counterPartyUuid;
+
+    /**
      * The amount of a transaction should be negative for PURCHASE or PAYMENT transactions,
      * except in the case of a refund.
      * This ensures that amounts are displayed from the user's perspective:
@@ -180,6 +186,14 @@ public class TransactionDto implements Serializable {
     public String getCurrencyCode() { return currencyCode; }
     public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 
+    public String getCounterPartyUuid() {
+        return counterPartyUuid;
+    }
+
+    public void setCounterPartyUuid(String counterPartyUuid) {
+        this.counterPartyUuid = counterPartyUuid;
+    }
+
     /**
      * Returns an unmodifiable list of payments linked to this transaction.
      *
@@ -264,6 +278,7 @@ public class TransactionDto implements Serializable {
                 "id='" + id + '\'' +
                 ", accountUuid='" + accountUuid + '\'' +
                 ", type=" + type +
+                ", counterPartyUuid='" + counterPartyUuid + '\'' +
                 ", metadatas=" + metadatas +
                 ", amount=" + amount +
                 ", currencyCode='" + currencyCode + '\'' +

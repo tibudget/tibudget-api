@@ -58,9 +58,11 @@ public class AccountDto implements Serializable {
     private String label;
 
     /**
-     * Name of the bank or provider of the account (e.g. Paypal, Amazon, etc.)
+     * UUID of the counterparty (e.g. Paypal, Amazon, etc.)
+     * You can find it with the CounterpartyProvider or use a fixed value since UUID will be stable.
+     * This value is mandatory.
      */
-    private String providerName;
+    private String counterPartyUuid;
 
     /**
      * Currency code ISO 4217
@@ -95,12 +97,12 @@ public class AccountDto implements Serializable {
      *
      * @param type            Type of account
      * @param label           Label of the account
-     * @param providerName    Name of the bank or provider of the account
+     * @param counterPartyUuid    Name of the bank or provider of the account
      * @param currencyCode    Currency code ISO 4217
      * @param currentBalance  Current balance of the account
      */
-    public AccountDto(AccountDtoType type, String label, String providerName, String currencyCode, double currentBalance) {
-        this(UUID.randomUUID().toString(), type, label, providerName, currencyCode, currentBalance, null);
+    public AccountDto(AccountDtoType type, String label, String counterPartyUuid, String currencyCode, double currentBalance) {
+        this(UUID.randomUUID().toString(), type, label, counterPartyUuid, currencyCode, currentBalance, null);
     }
 
     /**
@@ -109,7 +111,7 @@ public class AccountDto implements Serializable {
      * @param uuid                    UUID of the account
      * @param type                    Type of account
      * @param title                   Title of the bank account
-     * @param providerName            Name of the bank or provider of the account
+     * @param counterPartyUuid            Name of the bank or provider of the account
      * @param currencyCode            Currency code ISO 4217
      * @param currentBalance          Current balance of the account
      * @param lastUpdate              Last time that bank account has been updated successfully
@@ -118,7 +120,7 @@ public class AccountDto implements Serializable {
             String uuid,
             AccountDtoType type,
             String title,
-            String providerName,
+            String counterPartyUuid,
             String currencyCode,
             double currentBalance,
             Date lastUpdate
@@ -127,7 +129,7 @@ public class AccountDto implements Serializable {
         this.uuid = uuid;
         this.type = type;
         this.label = title;
-        this.providerName = providerName;
+        this.counterPartyUuid = counterPartyUuid;
         this.currencyCode = currencyCode;
         this.currentBalance = currentBalance;
         this.lastUpdate = lastUpdate;
@@ -161,11 +163,11 @@ public class AccountDto implements Serializable {
         this.currencyCode = currencyCode;
     }
 
-    public String getProviderName() {
-        return providerName;
+    public String getCounterPartyUuid() {
+        return counterPartyUuid;
     }
-    public void setProviderName(String providerName) {
-        this.providerName = providerName;
+    public void setCounterPartyUuid(String counterPartyUuid) {
+        this.counterPartyUuid = counterPartyUuid;
     }
 
     public AccountDtoType getType() {
@@ -279,7 +281,7 @@ public class AccountDto implements Serializable {
                 "uuid='" + uuid + '\'' +
                 ", type=" + type +
                 ", label='" + label + '\'' +
-                ", providerName='" + providerName + '\'' +
+                ", counterPartyUuid='" + counterPartyUuid + '\'' +
                 ", currencyCode='" + currencyCode + '\'' +
                 ", currentBalance=" + currentBalance +
                 ", metadatas=" + metadatas +
