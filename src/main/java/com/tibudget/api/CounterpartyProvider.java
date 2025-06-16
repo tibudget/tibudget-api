@@ -1,126 +1,213 @@
 package com.tibudget.api;
 
 /**
- * This interface provides functionality for retrieving counterparty associated to an {@link com.tibudget.dto.AccountDto}
- * or to a {@link com.tibudget.dto.TransactionDto}.
+ * This interface provides functionality for retrieving a counterparty UUID based on a query string.
+ * The query supports prefixed identifiers like "iban:", "fr_siret:", "bic:", etc.
+ * <p>
+ * The list of supported prefixes is exposed as constants with documentation.
+ * Note: this list is non-exhaustive and may grow over time.
  */
 public interface CounterpartyProvider {
 
     /**
      * Retrieves a universally unique identifier (UUID) corresponding to the provided query.
-     * The query can be a label or a complex query such as: "bic:CMCIFRPP" or "powens:e9606d38-6b0f-5f76-b573-61a4d00a927d"
+     * The query can be a plain label or a prefixed identifier such as "bic:CMCIFRPP" or "fr_siret:12345678900013".
      *
-     * @param query the search query as a {@code String}; it defines the criteria
-     *              to look for in the target data source
-     * @return the UUID as a {@code String} that corresponds to the given identifier type and value, or {@code null} if 0 or multiple match is found
+     * @param query the search query string
+     * @return the UUID as a {@code String}, or {@code null} if no match or multiple matches are found
      */
     String search(String query);
 
-    /**
-     * Retrieves a universally unique identifier (UUID) corresponding to a specific identifier type and value.
-     *
-     * @param type  the type of identifier (e.g., LEI, DUNS, IBAN, or any other defined in the {@code IdType} enum)
-     * @param value the value of the specific identifier for which the UUID is being requested
-     * @return the UUID as a {@code String} that corresponds to the given identifier type and value, or {@code null} if no match is found
-     */
-    String getUuidById(IdType type, String value);
+    // ---------- International identifiers ----------
 
-    enum IdType {
-        // International identifiers
-        LEI,              // Legal Entity Identifier (ISO 17442)
-        DUNS,             // D-U-N-S Number (Dun & Bradstreet)
-        IBAN,             // International Bank Account Number
-        BIC,              // Bank Identifier Code (SWIFT)
-        VAT_NUMBER,       // Generic VAT number (EU, UK, etc.)
-        EMAIL,            // Unique business contact (if registered)
-        WEBSITE_DOMAIN,   // Registered domain name
+    /** Legal Entity Identifier (ISO 17442) */
+    String PREFIX_LEI = "lei";
 
-        // France
-        FR_SIRET,         // Establishment ID (14 digits)
-        FR_SIREN,         // Company ID (9 digits)
+    /** D-U-N-S Number (Dun & Bradstreet global identifier) */
+    String PREFIX_DUNS = "duns";
 
-        // Germany
-        DE_HRB,           // Handelsregister number (commercial register)
-        DE_STEUERNUMMER,  // National tax number
-        DE_USTID,         // VAT ID (USt-IdNr)
+    /** International Bank Account Number */
+    String PREFIX_IBAN = "iban";
 
-        // United States
-        US_EIN,           // Employer Identification Number (IRS)
-        US_TIN,           // Taxpayer Identification Number
-        US_CIK,           // SEC Central Index Key
+    /** Bank Identifier Code (SWIFT) */
+    String PREFIX_BIC = "bic";
 
-        // United Kingdom
-        UK_COMPANY_NUMBER, // Companies House registration number
-        UK_UTR,            // Unique Taxpayer Reference
-        UK_VAT_NUMBER,     // VAT number
+    /** VAT number (generic international format) */
+    String PREFIX_VAT = "vat";
 
-        // Canada
-        CA_BN,            // Business Number (CRA)
-        CA_GST_HST,       // GST/HST Tax ID
+    /** Email address used as unique business identifier */
+    String PREFIX_EMAIL = "email";
 
-        // Italy
-        IT_CF,            // Codice Fiscale
-        IT_PIVA,          // Partita IVA (VAT)
+    /** Registered internet domain name (e.g. example.com) */
+    String PREFIX_DOMAIN = "domain";
 
-        // Spain
-        ES_CIF,           // Corporate tax ID
-        ES_NIF,           // Tax ID for individuals or entities
+    // ---------- France ----------
 
-        // Poland
-        PL_NIP,           // Tax Identification Number
-        PL_REGON,         // Statistical Business ID
+    /** SIRET – French establishment identifier (14 digits) */
+    String PREFIX_FR_SIRET = "fr_siret";
 
-        // Netherlands
-        NL_KVK,           // Chamber of Commerce number
-        NL_BTW,           // VAT number
+    /** SIREN – French company identifier (9 digits) */
+    String PREFIX_FR_SIREN = "fr_siren";
 
-        // Belgium
-        BE_KBO,           // Crossroads Bank for Enterprises number
+    // ---------- Germany ----------
 
-        // Australia
-        AU_ABN,           // Australian Business Number
-        AU_ACN,           // Australian Company Number
+    /** Handelsregister (commercial register) number */
+    String PREFIX_DE_HRB = "de_hrb";
 
-        // Brazil
-        BR_CNPJ,          // Company Tax ID
-        BR_CPF,           // Personal Tax ID
+    /** German national tax number */
+    String PREFIX_DE_STEUERNUMMER = "de_steuernummer";
 
-        // Switzerland
-        CH_IDE,           // UID – Swiss Enterprise Identification Number
+    /** German VAT ID (USt-IdNr) */
+    String PREFIX_DE_USTID = "de_ustid";
 
-        // Japan
-        JP_CORPORATE_NO,  // Corporate Number (法人番号)
+    // ---------- United States ----------
 
-        // South Korea
-        KR_BRN,           // Business Registration Number
+    /** Employer Identification Number (IRS) */
+    String PREFIX_US_EIN = "us_ein";
 
-        // China
-        CN_USCC,          // Unified Social Credit Code (统一社会信用代码)
+    /** Taxpayer Identification Number */
+    String PREFIX_US_TIN = "us_tin";
 
-        // India
-        IN_CIN,           // Corporate Identification Number
+    /** SEC Central Index Key */
+    String PREFIX_US_CIK = "us_cik";
 
-        // Russia
-        RU_OGRN,          // Primary State Registration Number
-        RU_INN,           // Taxpayer Identification Number
+    // ---------- United Kingdom ----------
 
-        // Mexico
-        MX_RFC,           // Federal Taxpayer Registry (Registro Federal de Contribuyentes)
+    /** UK Companies House registration number */
+    String PREFIX_UK_COMPANY_NUMBER = "uk_company_number";
 
-        // Turkey
-        TR_VKN,           // Turkish Tax Number
+    /** Unique Taxpayer Reference */
+    String PREFIX_UK_UTR = "uk_utr";
 
-        // Sweden
-        SE_ORGNR,         // Swedish Organization Number
+    /** UK VAT number */
+    String PREFIX_UK_VAT = "uk_vat";
 
-        // Denmark
-        DK_CVR,           // Central Business Register number
+    // ---------- Canada ----------
 
-        // Finland
-        FI_YTUNNUS,       // Business ID (Y-tunnus)
+    /** Canadian Business Number (CRA) */
+    String PREFIX_CA_BN = "ca_bn";
 
-        // Norway
-        NO_ORGNR          // Organization Number
-    }
+    /** Canadian GST/HST tax ID */
+    String PREFIX_CA_GST_HST = "ca_gst_hst";
 
+    // ---------- Italy ----------
+
+    /** Italian Codice Fiscale */
+    String PREFIX_IT_CF = "it_cf";
+
+    /** Italian Partita IVA (VAT number) */
+    String PREFIX_IT_PIVA = "it_piva";
+
+    // ---------- Spain ----------
+
+    /** Spanish CIF (corporate tax ID) */
+    String PREFIX_ES_CIF = "es_cif";
+
+    /** Spanish NIF (individual or company tax ID) */
+    String PREFIX_ES_NIF = "es_nif";
+
+    // ---------- Poland ----------
+
+    /** Polish tax identification number */
+    String PREFIX_PL_NIP = "pl_nip";
+
+    /** Polish business statistical number */
+    String PREFIX_PL_REGON = "pl_regon";
+
+    // ---------- Netherlands ----------
+
+    /** Dutch Chamber of Commerce number */
+    String PREFIX_NL_KVK = "nl_kvk";
+
+    /** Dutch VAT number */
+    String PREFIX_NL_BTW = "nl_btw";
+
+    // ---------- Belgium ----------
+
+    /** Belgian enterprise number (KBO) */
+    String PREFIX_BE_KBO = "be_kbo";
+
+    // ---------- Australia ----------
+
+    /** Australian Business Number */
+    String PREFIX_AU_ABN = "au_abn";
+
+    /** Australian Company Number */
+    String PREFIX_AU_ACN = "au_acn";
+
+    // ---------- Brazil ----------
+
+    /** Brazilian company tax ID (CNPJ) */
+    String PREFIX_BR_CNPJ = "br_cnpj";
+
+    /** Brazilian personal tax ID (CPF) */
+    String PREFIX_BR_CPF = "br_cpf";
+
+    // ---------- Switzerland ----------
+
+    /** Swiss UID (IDE) business identifier */
+    String PREFIX_CH_IDE = "ch_ide";
+
+    // ---------- Japan ----------
+
+    /** Japanese Corporate Number (法人番号) */
+    String PREFIX_JP_CORPORATE_NO = "jp_corporate_no";
+
+    // ---------- South Korea ----------
+
+    /** South Korean Business Registration Number */
+    String PREFIX_KR_BRN = "kr_brn";
+
+    // ---------- China ----------
+
+    /** Chinese Unified Social Credit Code (统一社会信用代码) */
+    String PREFIX_CN_USCC = "cn_uscc";
+
+    // ---------- India ----------
+
+    /** Indian Corporate Identification Number */
+    String PREFIX_IN_CIN = "in_cin";
+
+    // ---------- Russia ----------
+
+    /** Russian Primary State Registration Number */
+    String PREFIX_RU_OGRN = "ru_ogrn";
+
+    /** Russian Taxpayer Identification Number */
+    String PREFIX_RU_INN = "ru_inn";
+
+    // ---------- Mexico ----------
+
+    /** Mexican Federal Taxpayer Registry (RFC) */
+    String PREFIX_MX_RFC = "mx_rfc";
+
+    // ---------- Turkey ----------
+
+    /** Turkish Tax Identification Number (VKN) */
+    String PREFIX_TR_VKN = "tr_vkn";
+
+    // ---------- Sweden ----------
+
+    /** Swedish organization number */
+    String PREFIX_SE_ORGNR = "se_orgnr";
+
+    // ---------- Denmark ----------
+
+    /** Danish CVR number */
+    String PREFIX_DK_CVR = "dk_cvr";
+
+    // ---------- Finland ----------
+
+    /** Finnish business ID (Y-tunnus) */
+    String PREFIX_FI_YTUNNUS = "fi_ytunnus";
+
+    // ---------- Norway ----------
+
+    /** Norwegian organization number */
+    String PREFIX_NO_ORGNR = "no_orgnr";
+
+    // ---------- Vendor-specific ----------
+
+    /** Internal Powens connector UUID */
+    String PREFIX_POWENS = "powens";
 }
