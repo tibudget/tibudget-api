@@ -19,12 +19,14 @@ public interface CollectorPlugin {
      * Provides an OTP (One-Time Password) provider to the collector if required.
      *
      * @param internetProvider The bridge to use to connect to the internet. This ensure high level of security since you will only be able to connect to the domain names that you declared when you registered your collector.
+     * @param counterpartyProvider Interface to find Counterparty
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
     void init(InternetProvider internetProvider,
+              CounterpartyProvider counterpartyProvider,
               OTPProvider otpProvider,
               PDFToolsProvider pdfToolsProvider,
               Map<String, String> settings,
