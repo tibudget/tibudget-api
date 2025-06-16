@@ -7,6 +7,16 @@ package com.tibudget.api;
 public interface CounterpartyProvider {
 
     /**
+     * Retrieves a universally unique identifier (UUID) corresponding to the provided query.
+     * The query can be a label or a complex query such as: "bic:CMCIFRPP" or "powens:e9606d38-6b0f-5f76-b573-61a4d00a927d"
+     *
+     * @param query the search query as a {@code String}; it defines the criteria
+     *              to look for in the target data source
+     * @return the UUID as a {@code String} that corresponds to the given identifier type and value, or {@code null} if 0 or multiple match is found
+     */
+    String search(String query);
+
+    /**
      * Retrieves a universally unique identifier (UUID) corresponding to a specific identifier type and value.
      *
      * @param type  the type of identifier (e.g., LEI, DUNS, IBAN, or any other defined in the {@code IdType} enum)
