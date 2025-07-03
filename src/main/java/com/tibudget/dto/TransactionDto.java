@@ -43,15 +43,46 @@ public class TransactionDto implements Serializable {
         INTERNAL,
     }
 
-    /** Common metadata keys : Reference of this transaction (transaction ID for exemple) */
+    /**
+     * Represents the state of a transaction in the system.
+     */
+    public enum TransactionState {
+        /**
+         * The transaction has been fully processed and is finalized.
+         */
+        COMPLETED,
+
+        /**
+         * The transaction has been initiated but is not yet finalized.
+         * It may still be pending settlement or authorization.
+         */
+        PENDING,
+
+        /**
+         * The transaction is scheduled to occur in the future
+         * and has not yet been initiated.
+         */
+        UPCOMING,
+
+        /**
+         * The transaction is a planned installment or recurring payment.
+         * Used to track scheduled payments or payment plans.
+         */
+        SCHEDULED,
+
+        /**
+         * The transaction has been marked as deleted and is no longer active.
+         */
+        DELETED
+    }
+
+    /**
+     * Common metadata keys : Reference of this transaction (transaction ID for exemple)
+     */
     public static final String METADATA_REFERENCE = "REFERENCE";
-    /** Common metadata keys : IBAN of the counterparty if available */
-    public static final String METADATA_COUNTERPARTY_IBAN = "COUNTERPARTY_IBAN";
-    /** Common metadata keys : if available and applicable, provide the merchant or other counterparty name */
-    public static final String METADATA_COUNTERPARTY_NAME = "COUNTERPARTY_NAME";
-    /** Common metadata keys : if available and applicable, provide the merchant or other counterparty  website */
-    public static final String METADATA_COUNTERPARTY_WEBSITE = "COUNTERPARTY_WEBSITE";
-    /** Common metadata keys : if available and applicable, provide the check number */
+    /**
+     * Common metadata keys : if available and applicable, provide the check number
+     */
     public static final String METADATA_CHECK_NUMBER = "CHECK_NUMBER";
 
     /**
@@ -66,6 +97,7 @@ public class TransactionDto implements Serializable {
      */
     private String accountUuid;
     private TransactionDtoType type;
+    private TransactionState state;
     private final Map<String, String> metadatas;
 
     /**
@@ -124,6 +156,7 @@ public class TransactionDto implements Serializable {
         this.files = new ArrayList<>();
         this.items = new ArrayList<>();
         this.payments = new ArrayList<>();
+        this.state = TransactionState.COMPLETED;
     }
 
     /**
@@ -139,7 +172,7 @@ public class TransactionDto implements Serializable {
      * @param amount          Amount of the transaction.
      */
     public TransactionDto(String id, String accountUuid, TransactionDtoType type, Date dateTransaction, Date dateValue,
-                          String label, String details, double amount) {
+                          String label, String details, double amount, String currencyCode) {
         this();
         this.id = id;
         this.accountUuid = accountUuid;
@@ -149,42 +182,94 @@ public class TransactionDto implements Serializable {
         this.label = label;
         this.type = type;
         this.amount = amount;
+        this.currencyCode = currencyCode;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getAccountUuid() { return accountUuid; }
-    public void setAccountUuid(String accountUuid) { this.accountUuid = accountUuid; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public Date getDateTransaction() { return dateTransaction; }
-    public void setDateTransaction(Date dateTransaction) { this.dateTransaction = dateTransaction; }
+    public String getAccountUuid() {
+        return accountUuid;
+    }
 
-    public Date getDateValue() { return dateValue; }
-    public void setDateValue(Date dateValue) { this.dateValue = dateValue; }
+    public void setAccountUuid(String accountUuid) {
+        this.accountUuid = accountUuid;
+    }
 
-    public String getDetails() { return details; }
+    public Date getDateTransaction() {
+        return dateTransaction;
+    }
+
+    public void setDateTransaction(Date dateTransaction) {
+        this.dateTransaction = dateTransaction;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
+
+    public String getDetails() {
+        return details;
+    }
 
     /**
      * @param details Limited to {@link #DETAILS_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
      */
-    public void setDetails(String details) { this.details = details; }
+    public void setDetails(String details) {
+        this.details = details;
+    }
 
-    public String getLabel() { return label; }
+    public String getLabel() {
+        return label;
+    }
 
     /**
      * @param label Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
      */
-    public void setLabel(String label) { this.label = label; }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-    public TransactionDtoType getType() { return type; }
-    public void setType(TransactionDtoType type) { this.type = type; }
+    public TransactionDtoType getType() {
+        return type;
+    }
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public void setType(TransactionDtoType type) {
+        this.type = type;
+    }
 
-    public String getCurrencyCode() { return currencyCode; }
-    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
+    public TransactionState getState() {
+        return state;
+    }
+
+    public void setState(TransactionState state) {
+        this.state = state;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
     public String getCounterPartyUuid() {
         return counterPartyUuid;
@@ -199,33 +284,56 @@ public class TransactionDto implements Serializable {
      *
      * @return List of payments.
      */
-    public List<PaymentDto> getPayments() { return Collections.unmodifiableList(payments); }
-    public void addPayment(PaymentDto payment) { this.payments.add(payment); }
-    public void addPayments(List<PaymentDto> payments) { this.payments.addAll(payments); }
+    public List<PaymentDto> getPayments() {
+        return Collections.unmodifiableList(payments);
+    }
+
+    public void addPayment(PaymentDto payment) {
+        this.payments.add(payment);
+    }
+
+    public void addPayments(List<PaymentDto> payments) {
+        this.payments.addAll(payments);
+    }
 
     /**
      * Returns an unmodifiable list of files linked to this transaction.
      *
      * @return List of files.
      */
-    public List<FileDto> getFiles() { return Collections.unmodifiableList(files); }
-    public void addFile(FileDto file) { this.files.add(file); }
+    public List<FileDto> getFiles() {
+        return Collections.unmodifiableList(files);
+    }
+
+    public void addFile(FileDto file) {
+        this.files.add(file);
+    }
 
     /**
      * Returns an unmodifiable list of items linked to this transaction.
      *
      * @return List of items.
      */
-    public List<ItemDto> getItems() { return Collections.unmodifiableList(items); }
-    public void addItem(ItemDto item) { this.items.add(item); }
-    public void addItems(List<ItemDto> items) { this.items.addAll(items); }
+    public List<ItemDto> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public void addItem(ItemDto item) {
+        this.items.add(item);
+    }
+
+    public void addItems(List<ItemDto> items) {
+        this.items.addAll(items);
+    }
 
     /**
      * Returns the metadata map.
      *
      * @return Map of metadata key-value pairs.
      */
-    public Map<String, String> getMetadatas() { return Collections.unmodifiableMap(metadatas); }
+    public Map<String, String> getMetadatas() {
+        return Collections.unmodifiableMap(metadatas);
+    }
 
     /**
      * Retrieves a specific metadata value by key.
@@ -233,20 +341,21 @@ public class TransactionDto implements Serializable {
      * @param key The metadata key.
      * @return The associated metadata value, or null if not found.
      */
-    public String getMetadata(String key) { return metadatas.get(key); }
+    public String getMetadata(String key) {
+        return metadatas.get(key);
+    }
 
     /**
      * Sets a metadata key-value pair.
      *
-     * @param key   The metadata key.
-     * @param data  The metadata value. Set to null to delete the metadata.
+     * @param key  The metadata key.
+     * @param data The metadata value. Set to null to delete the metadata.
      */
     public void setMetadata(String key, String data) {
         if (key != null) {
             if (data != null) {
                 this.metadatas.put(key, data);
-            }
-            else {
+            } else {
                 this.metadatas.remove(key);
             }
         }
