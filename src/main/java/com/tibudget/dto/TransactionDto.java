@@ -26,7 +26,8 @@ public class TransactionDto implements Serializable {
 
         /**
          * A payment transaction, representing a withdrawal from a bank account.
-         * This type of transaction is always linked to a {@link #PURCHASE} transaction.
+         * This type of transaction is often linked to a {@link #PURCHASE} transaction but can also be linked to another
+         * {@link #PAYMENT} transaction (when buying with a digital wallet for exemple bank -> paypal -> store).
          */
         PAYMENT,
 
@@ -46,7 +47,7 @@ public class TransactionDto implements Serializable {
     /**
      * Represents the state of a transaction in the system.
      */
-    public enum TransactionState {
+    public enum TransactionDtoState {
         /**
          * The transaction has been fully processed and is finalized.
          */
@@ -96,8 +97,11 @@ public class TransactionDto implements Serializable {
      * with the transaction.
      */
     private String accountUuid;
+
     private TransactionDtoType type;
-    private TransactionState state;
+
+    private TransactionDtoState state;
+
     private final Map<String, String> metadatas;
 
     /**
@@ -156,7 +160,7 @@ public class TransactionDto implements Serializable {
         this.files = new ArrayList<>();
         this.items = new ArrayList<>();
         this.payments = new ArrayList<>();
-        this.state = TransactionState.COMPLETED;
+        this.state = TransactionDtoState.COMPLETED;
     }
 
     /**
@@ -247,11 +251,11 @@ public class TransactionDto implements Serializable {
         this.type = type;
     }
 
-    public TransactionState getState() {
+    public TransactionDtoState getState() {
         return state;
     }
 
-    public void setState(TransactionState state) {
+    public void setState(TransactionDtoState state) {
         this.state = state;
     }
 
