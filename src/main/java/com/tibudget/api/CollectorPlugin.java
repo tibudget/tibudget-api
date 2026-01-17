@@ -22,6 +22,7 @@ public interface CollectorPlugin {
      * @param counterpartyProvider Interface to find Counterparty
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
+     * @param settings         a map containing settings previously returned by {@link #getSettings()} after last collect
      * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
