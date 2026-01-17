@@ -80,11 +80,12 @@ public class TransactionDto implements Serializable {
     /**
      * Common metadata keys : Reference of this transaction (transaction ID for exemple)
      */
-    public static final String METADATA_REFERENCE = "REFERENCE";
+    public static final String METADATA_REFERENCE = "tibu:ref";
+
     /**
      * Common metadata keys : if available and applicable, provide the check number
      */
-    public static final String METADATA_CHECK_NUMBER = "CHECK_NUMBER";
+    public static final String METADATA_CHECK_NUMBER = "tibu:check_number";
 
     /**
      * Unique identifier for this transaction within the associated account.
