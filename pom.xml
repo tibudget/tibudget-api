@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibudget</groupId>
 	<artifactId>tibudget-api</artifactId>
-	<version>0.37</version>
+	<version>0.38-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ti'bu API</name>
@@ -21,7 +21,7 @@
 
 	<scm>
 		<connection>scm:git:https://github.com/tibudget/tibudget-api.git</connection>
-		<tag>tibudget-api-0.37</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
