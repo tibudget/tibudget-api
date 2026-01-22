@@ -19,11 +19,29 @@ public class FileDto implements Serializable {
     private static final int MAX_SIZE_BYTES = 52_428_800;
 
     /**
-     * Defines the type of a file, determining how the app should handle it.
+     * Defines the functional type of a file and how it should be handled by the application.
+     *
+     * <ul>
+     *   <li>{@link #IMAGE} A generic image file, photo or scan.</li>
+     *   <li>{@link #INVOICE} A formal invoice document, usually including legal and tax details.</li>
+     *   <li>{@link #RECEIPT_PAYMENT} A payment receipt, such as a card terminal or bank payment receipt.</li>
+     *   <li>{@link #RECEIPT_CASHIER} A cashier receipt, also known as a sales receipt or till receipt,
+     *       typically listing purchased items.</li>
+     *   <li>{@link #CONTRACT} A contract or legally binding agreement.</li>
+     *   <li>{@link #NOTICE} An informational or administrative notice.</li>
+     *   <li>{@link #OTHER} Any file that does not fit into the predefined categories.</li>
+     * </ul>
      */
     public enum FileDtoType {
-        IMAGE, INVOICE, RECEIPT, CONTRACT, NOTICE, OTHER
+        IMAGE,
+        INVOICE,
+        RECEIPT_PAYMENT,
+        RECEIPT_CASHIER,
+        CONTRACT,
+        NOTICE,
+        OTHER
     }
+
 
     /** Type of file so the app knows how to process it */
     private FileDtoType type;

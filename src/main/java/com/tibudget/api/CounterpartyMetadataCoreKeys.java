@@ -283,4 +283,10 @@ public enum CounterpartyMetadataCoreKeys {
     public boolean isUnique() {
         return unique;
     }
+
+    @Override
+    public String toString() {
+        // In case the developper forgot to add .key
+        return key;
+    }
 }
