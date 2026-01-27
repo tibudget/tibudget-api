@@ -35,10 +35,28 @@ public interface CollectorPlugin {
               List<AccountDto> previousAccounts);
 
     /**
-     * TODO Improve this doc
-     * Called when a callback URL is received
-     * @param callbackUri The full URI received by tibu at the end of the conection flow
-     * @return The title of the configuration (bank/shop name + first name of the account for example)
+     * Called when the collector receives a callback URI at the end of an external
+     * authentication or connection flow (OAuth, SSO, web login, etc.).
+     *
+     * <p>
+     * This method is typically responsible for:
+     * <ul>
+     *     <li>Validating the callback parameters (code, token, state, error...)</li>
+     *     <li>Finalizing the authentication process</li>
+     *     <li>Fetching initial user or account information if required</li>
+     * </ul>
+     *
+     * <p>
+     * The returned value will be displayed to the user and should uniquely identify
+     * the configured connection, for example:
+     * <ul>
+     *     <li>Bank name + account owner first name</li>
+     *     <li>Shop name + customer identifier</li>
+     * </ul>
+     *
+     * @param callbackUri The full callback URI received by Tibu at the end of the connection flow
+     * @return A human-readable title describing the configured connection
+     * @throws IllegalArgumentException if the callback URI is invalid or incomplete
      */
     String initConnection(URI callbackUri);
 
