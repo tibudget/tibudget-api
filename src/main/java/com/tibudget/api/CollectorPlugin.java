@@ -23,7 +23,6 @@ public interface CollectorPlugin {
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param settings         a map containing settings previously returned by {@link #getSettings()} after last collect
-     * @param previousCookies  a map containing cookies previously returned by {@link #getCookies()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
      */
     void init(InternetProvider internetProvider,
@@ -31,7 +30,6 @@ public interface CollectorPlugin {
               OTPProvider otpProvider,
               PDFToolsProvider pdfToolsProvider,
               Map<String, String> settings,
-              Map<String, String> previousCookies,
               List<AccountDto> previousAccounts);
 
     /**
@@ -106,14 +104,6 @@ public interface CollectorPlugin {
      * @return a map containing settings usefull for the collector.
      */
     Map<String, String> getSettings();
-
-    /**
-     * Retrieves the cookies to be stored after a collect session.
-     * These cookies can be used to restore the session before the next collect attempt.
-     *
-     * @return a map containing session cookies.
-     */
-    Map<String, String> getCookies();
 
     /**
      * Retrieves the list of synchronized accounts.
