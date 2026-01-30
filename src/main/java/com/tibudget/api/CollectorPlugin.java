@@ -123,6 +123,67 @@ public interface CollectorPlugin {
     List<TransactionDto> getTransactions();
 
     /**
+     * Returns a human-readable name for this configuration, displayed to the end user.
+     * <p>
+     * This label is used to differentiate multiple connections created with the same collector.
+     * It should be meaningful but must never expose sensitive information.
+     * <p>
+     * This method is invoked:
+     * <ul>
+     * <li>After each successful {@code collect()}
+     * <li>After {@code initConnection()}
+     * </ul>
+     * <p>
+     * Implementations should be fast and side-effect free.
+     * The returned value may evolve over time (eg. user name updated by the provider).
+     * <p>
+     * Recommended content:
+     * <ul>
+     * <li>First name or nickname of the user
+     * <li>Partial identifier such as a masked email prefix
+     * </ul>
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>"John (johndoe@***.*)"
+     * <li>"Personal account"
+     * </ul>
+     * @return A displayable configuration label, or null if no label can be determined
+     */
+    String getConfigurationName();
+
+    /**
+     * Returns a stable identifier for this configuration.
+     * <p>
+     * This value is used to detect duplicate configurations and prevent the same
+     * connection from being configured multiple times for a single user.
+     * <p>
+     * Implementations should be fast and side-effect free.
+     * <p>
+     * This method is invoked:
+     * <ul>
+     * <li>After {@code initConnection()}
+     * <li>After the first successful {@code collect()} if {@code initConnection()} has not been called
+     * </ul>
+     * <p>
+     * Because this identifier is persisted and reused, it must:
+     * <ul>
+     * <li>Be deterministic (same input always produces the same value)
+     * <li>Be stable over time
+     * <li>Not expose raw sensitive data
+     * </ul>
+     * <p>
+     * Typical implementations include:
+     * <ul>
+     * <li>A hash of the login identifier (email, username, customer id)
+     * <li>A hash of multiple fields if needed (eg. email + region)
+     * </ul>
+     *
+     * @return A stable identifier hash for this configuration, or null if it cannot be computed
+     */
+    String getConfigurationIdHash();
+
+    /**
      * Retrieves the current progress of the data collect process as a percentage.
      *
      * @return an integer between 0 and 100 (inclusive) representing the collect progress.
