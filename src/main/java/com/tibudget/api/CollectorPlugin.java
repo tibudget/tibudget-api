@@ -3,6 +3,7 @@ package com.tibudget.api;
 import com.tibudget.api.exceptions.*;
 import com.tibudget.dto.AccountDto;
 import com.tibudget.dto.MessageDto;
+import com.tibudget.dto.RecurringPaymentDto;
 import com.tibudget.dto.TransactionDto;
 
 import java.net.URI;
@@ -24,13 +25,15 @@ public interface CollectorPlugin {
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param settings         a map containing settings previously returned by {@link #getSettings()} after last collect
      * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
+     * @param previousRecurringPayments recurring payments previously collected by this collector. The label may have been modified by the user, this must be preserved.
      */
     void init(InternetProvider internetProvider,
               CounterpartyProvider counterpartyProvider,
               OTPProvider otpProvider,
               PDFToolsProvider pdfToolsProvider,
               Map<String, String> settings,
-              List<AccountDto> previousAccounts);
+              List<AccountDto> previousAccounts,
+              List<RecurringPaymentDto> previousRecurringPayments);
 
     /**
      * Called when the collector receives a callback URI at the end of an external
@@ -115,12 +118,21 @@ public interface CollectorPlugin {
     List<AccountDto> getAccounts();
 
     /**
-     * Retrieves the list of new transactions detected since the last {@link #collect(Iterable)} call.
+     * Retrieves the list of new transactions detected since the last {@link #collect()} call.
      * Transactions should be associated with accounts present in the list returned by {@link #getAccounts()}.
      *
      * @return an iterable collection of {@link TransactionDto} representing new transactions.
      */
     List<TransactionDto> getTransactions();
+
+    /**
+     * Retrieves a list of recurring payments associated with the collector.
+     * Recurring payments typically include subscription fees, recurring bills,
+     * or other scheduled financial transactions.
+     *
+     * @return a list of {@link RecurringPaymentDto} objects representing recurring payments.
+     */
+    List<RecurringPaymentDto> getRecurringPayments();
 
     /**
      * Returns a human-readable name for this configuration, displayed to the end user.

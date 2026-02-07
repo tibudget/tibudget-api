@@ -99,6 +99,11 @@ public class TransactionDto implements Serializable {
      */
     private String accountUuid;
 
+    /**
+     * Represents the unique identifier for a recurrent payment associated with this transaction if any.
+     */
+    private String recurrentPaymentUuid;
+
     private TransactionDtoType type;
 
     private TransactionDtoState state;
@@ -204,6 +209,14 @@ public class TransactionDto implements Serializable {
 
     public void setAccountUuid(String accountUuid) {
         this.accountUuid = accountUuid;
+    }
+
+    public String getRecurrentPaymentUuid() {
+        return recurrentPaymentUuid;
+    }
+
+    public void setRecurrentPaymentUuid(String recurrentPaymentUuid) {
+        this.recurrentPaymentUuid = recurrentPaymentUuid;
     }
 
     public Date getDateTransaction() {
