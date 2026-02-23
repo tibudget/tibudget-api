@@ -402,16 +402,18 @@ public class TransactionDto implements Serializable {
     @Override
     public String toString() {
         return "TransactionDto{" +
-                "id='" + id + '\'' +
-                ", accountUuid='" + accountUuid + '\'' +
-                ", type=" + type +
-                ", counterPartyUuid='" + counterPartyUuid + '\'' +
-                ", metadatas=" + metadatas +
+                " dateTransaction=" + dateTransaction +
                 ", amount=" + amount +
                 ", currencyCode='" + currencyCode + '\'' +
-                ", dateValue=" + dateValue +
-                ", dateTransaction=" + dateTransaction +
                 ", label='" + label + '\'' +
+                ", type=" + type +
+                ", state=" + state +
+                ", id='" + id + '\'' +
+                ", accountUuid='" + accountUuid + '\'' +
+                ", counterPartyUuid='" + counterPartyUuid + '\'' +
+                ", recurrentPaymentUuid='" + recurrentPaymentUuid + '\'' +
+                ", metadatas=" + metadatas +
+                ", dateValue=" + dateValue +
                 ", details='" + details + '\'' +
                 ", locationInfos=" + locationInfos +
                 ", payments=" + payments +

@@ -22,8 +22,17 @@ public class RecurringPaymentDto implements Serializable {
     }
 
     public enum State {
+        /**
+         * The recurring payment is active and will be processed even if the first payment has not yet been made.
+         */
         ACTIVE,
+        /**
+         * The recurring payment is paused and will not be processed until it is resumed. It is not a cancellation.
+         */
         PAUSED,
+        /**
+         * The recurring payment has ended and will not be processed anymore.
+         */
         ENDED
     }
 
@@ -284,7 +293,8 @@ public class RecurringPaymentDto implements Serializable {
     @Override
     public String toString() {
         return "RecurringPaymentDto{" +
-                "uuid='" + uuid + '\'' +
+                "id='" + id + '\'' +
+                ", uuid='" + uuid + '\'' +
                 ", accountUuid='" + accountUuid + '\'' +
                 ", label='" + label + '\'' +
                 ", expectedAmount=" + expectedAmount +

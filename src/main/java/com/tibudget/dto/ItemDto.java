@@ -89,14 +89,34 @@ public class ItemDto implements Serializable {
         CUBIC_METER,
 
         /**
-         * Time in hours. Useful for services or time-based usage (e.g., parking, rentals).
+         * Time - fixed duration
          */
+        MILLISECOND,
+        SECOND,
+        MINUTE,
         HOUR,
+
+        /**
+         * Calendar based
+         */
+        DAY,
+        MONTH,
+        YEAR,
+
+        /**
+         * Digital data
+         */
+        BYTE,
 
         /**
          * Fallback unit for unknown or custom measurements.
          */
-        OTHER
+        OTHER,
+
+        /**
+         * When you don't know the unit.
+         */
+        UNKNOWN
     }
 
     /**
@@ -125,7 +145,7 @@ public class ItemDto implements Serializable {
      */
     private double quantity;
 
-    private QuantityUnit quantityUnit = QuantityUnit.UNIT;
+    private QuantityUnit quantityUnit = QuantityUnit.UNKNOWN;
 
     /**
      * References of the item, try to add at least one reference

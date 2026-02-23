@@ -290,6 +290,14 @@ public class AccountDto implements Serializable {
 
     @Override
     public String toString() {
-        return "AccountDto{" + "uuid='" + uuid + '\'' + ", type=" + type + ", label='" + label + '\'' + ", counterPartyUuid='" + counterPartyUuid + '\'' + ", currencyCode='" + currencyCode + '\'' + ", currentBalance=" + currentBalance + ", metadatas=" + metadatas + ", lastUpdate=" + lastUpdate + ", paymentMethods=" + paymentMethods + '}';
+        return "AccountDto{" +
+                "id='" + id + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", type=" + type +
+                ", label='" + label + '\'' +
+                ", counterPartyUuid='" + counterPartyUuid + '\'' +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", currentBalance=" + currentBalance +
+                '}';
     }
 }
