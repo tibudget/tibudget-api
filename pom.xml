@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibudget</groupId>
 	<artifactId>tibudget-api</artifactId>
-	<version>0.46</version>
+	<version>0.46-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ti'budget collectors API</name>
@@ -22,7 +22,7 @@
 
 	<scm>
 		<connection>scm:git:https://github.com/tibudget/tibudget-api.git</connection>
-		<developerConnection>scm:git:ssh://github.com/tibudget/tibudget-api.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/tibudget/tibudget-api.git</developerConnection>
 		<url>https://github.com/tibudget/tibudget-api</url>
 		<tag>tibudget-api-0.46</tag>
 	</scm>
