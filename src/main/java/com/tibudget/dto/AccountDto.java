@@ -97,6 +97,13 @@ public class AccountDto implements Serializable {
      */
     private String currencyCode;
 
+    /**
+     * Represents the identifier for the time zone associated with the account.
+     * This value is typically used to specify the time zone in which the account operates.
+     * It is expected to comply with IANA standard time zone identifiers (e.g., "Europe/Paris").
+     */
+    private String timeZoneId;
+
     private double currentBalance;
 
     private final Map<String, String> metadatas;
@@ -190,6 +197,14 @@ public class AccountDto implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
     }
 
     public String getCounterPartyUuid() {

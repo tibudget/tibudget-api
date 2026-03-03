@@ -49,32 +49,22 @@ public class TransactionDto implements Serializable {
      */
     public enum TransactionDtoState {
         /**
-         * The transaction has been fully processed and is finalized.
+         * The transaction has been fully processed and confirmed.
+         * Its amount is included in the real account balance.
          */
         COMPLETED,
 
         /**
-         * The transaction has been initiated but is not yet finalized.
-         * It may still be pending settlement or authorization.
+         * The transaction is scheduled for a future date but has not yet occurred.
+         * Its amount is NOT included in the real account balance.
          */
         PENDING,
 
         /**
-         * The transaction is scheduled to occur in the future
-         * and has not yet been initiated.
-         */
-        UPCOMING,
-
-        /**
-         * The transaction is a planned installment or recurring payment.
-         * Used to track scheduled payments or payment plans.
-         */
-        SCHEDULED,
-
-        /**
          * The transaction has been marked as deleted and is no longer active.
+         * Its amount is NOT included into the balance of the account anymore.
          */
-        DELETED
+        DELETED;
     }
 
     /**
