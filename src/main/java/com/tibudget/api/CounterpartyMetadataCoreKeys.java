@@ -165,11 +165,40 @@ public enum CounterpartyMetadataCoreKeys {
     ),
 
     /**
-     * Logo image in 128x128 format.
+     * Square logo representing the counterparty.
+     * <p>
+     * Recommended specifications:
+     * - Shape: square
+     * - Minimum resolution: 128x128 px
+     * - Ideal resolution: 256x256 px
+     * - Format: PNG or WebP
+     * - Background: preferably transparent
+     * <p>
+     * The logo is typically displayed at small sizes in the UI (around 40–56dp),
+     * so extremely large images are unnecessary. Avoid upscaled or low-quality images.
      */
-    LOGO_128(
-            "tibu:logo:128x128",
-            "Logo image (128x128)",
+    LOGO(
+            "tibu:logo:square",
+            "Square logo image",
+            false,
+            false
+    ),
+
+    /**
+     * Cover image used as the header visual for the counterparty screen.
+     * <p>
+     * Recommended specifications:
+     * - Resolution: 1280x720 px
+     * - Aspect ratio: 16:9
+     * - Format: JPEG or WebP
+     * <p>
+     * The cover image should represent the place (storefront, interior, or activity)
+     * and may be partially cropped depending on the device screen ratio.
+     * Important visual elements should therefore remain centered.
+     */
+    COVER(
+            "tibu:cover:16/9",
+            "Cover image (16/9)",
             false,
             false
     ),
