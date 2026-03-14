@@ -133,8 +133,8 @@ public class AccountDto implements Serializable {
      * @param currencyCode     Currency code ISO 4217
      * @param currentBalance   Current balance of the account
      */
-    public AccountDto(AccountDtoType type, String label, String counterPartyUuid, String currencyCode, double currentBalance) {
-        this(UUID.randomUUID().toString(), type, label, counterPartyUuid, currencyCode, currentBalance, null);
+    public AccountDto(AccountDtoType type, String label, String counterPartyUuid, String currencyCode, String timeZoneId, double currentBalance) {
+        this(UUID.randomUUID().toString(), type, label, counterPartyUuid, currencyCode, timeZoneId, currentBalance, null);
     }
 
     /**
@@ -145,10 +145,11 @@ public class AccountDto implements Serializable {
      * @param title            Title of the bank account
      * @param counterPartyUuid Name of the bank or provider of the account
      * @param currencyCode     Currency code ISO 4217
+     * @param timeZoneId       Time zone of the account
      * @param currentBalance   Current balance of the account
      * @param lastUpdate       Last time that bank account has been updated successfully
      */
-    public AccountDto(String uuid, AccountDtoType type, String title, String counterPartyUuid, String currencyCode, double currentBalance, Date lastUpdate) {
+    public AccountDto(String uuid, AccountDtoType type, String title, String counterPartyUuid, String currencyCode, String timeZoneId, double currentBalance, Date lastUpdate) {
         this();
         this.uuid = uuid;
         this.type = type;
@@ -156,6 +157,7 @@ public class AccountDto implements Serializable {
         this.counterPartyUuid = counterPartyUuid;
         this.currencyCode = currencyCode;
         this.currentBalance = currentBalance;
+        this.timeZoneId = timeZoneId;
         this.lastUpdate = lastUpdate;
     }
 
