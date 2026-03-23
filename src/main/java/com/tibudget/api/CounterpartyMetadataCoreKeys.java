@@ -57,6 +57,19 @@ public enum CounterpartyMetadataCoreKeys {
     ),
 
     /**
+     * Counterparty originating from OpenStreetMap.
+     * <p>
+     * The value represents the OSM identifier.
+     * Examples: node/123, way/12345, relation/123456789.
+     */
+    SOURCE_SIRENE(
+            "tibu:source:sirene",
+            "Counterparty originating from Sirene (INSEE)",
+            false,
+            true
+    ),
+
+    /**
      * Counterparty created by an end user.
      */
     SOURCE_USER(
@@ -126,6 +139,16 @@ public enum CounterpartyMetadataCoreKeys {
     CITY(
             "tibu:address:city",
             "City name",
+            false,
+            false
+    ),
+
+    /**
+     * Postal code.
+     */
+    POSTALCODE(
+            "tibu:address:postalcode",
+            "Postal code",
             false,
             false
     ),

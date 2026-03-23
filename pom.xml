@@ -7,11 +7,11 @@
 	<version>0.50-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ti'budget collectors API</name>
-	<description>Core API for ti'budget collectors, service interfaces and DTOs</description>
+	<name>tibudget collectors API</name>
+	<description>Core API for tibudget collectors, service interfaces and DTOs</description>
 	<url>https://tibudget.com</url>
 	<organization>
-		<name>ti'budget</name>
+		<name>tibudget</name>
 		<url>https://tibudget.com</url>
 	</organization>
 
@@ -24,7 +24,7 @@
 		<connection>scm:git:https://github.com/tibudget/tibudget-api.git</connection>
 		<developerConnection>scm:git:https://github.com/tibudget/tibudget-api.git</developerConnection>
 		<url>https://github.com/tibudget/tibudget-api</url>
-		<tag>tibudget-api-0.46</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<licenses>
@@ -35,19 +35,6 @@
 		</license>
 	</licenses>
 
-	<distributionManagement>
-		<repository>
-			<id>tibudget-repository-release</id>
-			<name>tibudget Release Repository</name>
-			<url>s3://tibudget-maven-repository/release</url>
-		</repository>
-		<snapshotRepository>
-			<id>tibudget-repository-snapshot</id>
-			<name>tibudget Snapshot Repository</name>
-			<url>s3://tibudget-maven-repository/snapshot</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<build>
 		<extensions>
 			<extension>
@@ -57,6 +44,15 @@
 			</extension>
 		</extensions>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<!-- Important for JitPack to work correctly -->
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
+			</plugin>
 			<!-- Java compiler version -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
