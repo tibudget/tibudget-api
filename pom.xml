@@ -45,12 +45,42 @@
 		</extensions>
 		<plugins>
 			<plugin>
+			<groupId>com.google.code.maven-replacer-plugin</groupId>
+			<artifactId>replacer</artifactId>
+			<version>1.5.3</version>
+				<executions>
+				<execution>
+					<id>version-number</id>
+					<configuration>
+						<file>README.md</file>
+						<regex>true</regex>
+						<replacements>
+							<replacement>
+								<token>&lt;version&gt;[0-9A-Z\.]+&lt;/version&gt;</token>
+								<value>&lt;version&gt;${project.version}&lt;/version&gt;</value>
+							</replacement>
+							<replacement>
+								<token>-SNAPSHOT</token>
+								<value />
+							</replacement>
+						</replacements>
+					</configuration>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>replace</goal>
+					</goals>
+				</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>3.3.1</version>
 				<configuration>
 					<!-- Important for JitPack to work correctly -->
 					<tagNameFormat>@{project.version}</tagNameFormat>
+					<!-- Skip deploy as we use JitPack but still want the "release" process -->
+					<arguments>-Dmaven.deploy.skip=true</arguments>
 				</configuration>
 			</plugin>
 			<!-- Java compiler version -->
