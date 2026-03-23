@@ -1,12 +1,12 @@
 # tibudget API
 
-## ? Currently in development
+## Currently in development
 
 This project is still under development and is not ready for production use.
 
 ---
 
-## ? Installation (via JitPack)
+## Installation (via JitPack)
 
 ### 1. Add the JitPack repository
 
