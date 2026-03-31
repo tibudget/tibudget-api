@@ -7,7 +7,10 @@ import com.tibudget.dto.MessageDto.MessageType;
 import com.tibudget.dto.MessagesDto;
 
 /**
- * Exception that can contains messages to display to the end user 
+ * Exception that can contain messages to display to the end user.
+ * <p>
+ * Subclasses can use this exception to attach one or more user-facing messages
+ * alongside an optional cause.
  */
 public abstract class MessagesException extends Exception {
 
@@ -30,7 +33,9 @@ public abstract class MessagesException extends Exception {
 	}
 
 	/**
-	 * @return The messages so you can manage the list if you need to
+	 * Returns the messages associated with this exception.
+	 *
+	 * @return the messages
 	 */
 	public MessagesDto getMessages() {
 		return messages;

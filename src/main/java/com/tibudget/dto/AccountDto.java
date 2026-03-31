@@ -131,6 +131,7 @@ public class AccountDto implements Serializable {
      * @param label            Label of the account
      * @param counterPartyUuid Name of the bank or provider of the account
      * @param currencyCode     Currency code ISO 4217
+     * @param timeZoneId       Time zone of the account
      * @param currentBalance   Current balance of the account
      */
     public AccountDto(AccountDtoType type, String label, String counterPartyUuid, String currencyCode, String timeZoneId, double currentBalance) {

@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Represents a payment transaction with details such as type, amount, currency, and references.
+ * Data Transfer Object representing a payment.
+ * It contains details such as the payment type, amount, currency, references, and payment method metadata.
  */
 public class PaymentDto implements Serializable {
 
@@ -77,23 +78,39 @@ public class PaymentDto implements Serializable {
     private String currencyCode;
 
     /**
-     * The reference of the payment (ID of the transaction for exemple).
+     * The reference of the payment (transaction ID, for example).
      */
     private String reference;
 
     /**
-     * The reference payment method used for this payment.
-     * <li>CARD: we expect the last 4 digits of the card</li>
-     * <li>TRANSFERT: we expect the IBAN of the destinataire</li>
-     * <li>CHECK: the number of the check</li>
-     * <li>CASH, GIFT_CARD, STORE_CREDIT: let empty</li>
+     * The reference of the payment method used for this payment.
+     * <ul>
+     * <li>CARD: expected to be the last 4 digits of the card</li>
+     * <li>TRANSFER: expected to be the destination IBAN</li>
+     * <li>CHECK: expected to be the check number</li>
+     * <li>CASH, GIFT_CARD, STORE_CREDIT: leave empty</li>
+     * </ul>
      */
     private String paymentMethodReference;
 
+    /**
+     * Creates an empty payment DTO.
+     */
     public PaymentDto() {
         super();
     }
 
+    /**
+     * Creates a payment DTO with all fields initialized.
+     *
+     * @param type                    the payment type
+     * @param providerName            the payment method provider name
+     * @param paymentDate             the date when the payment was made
+     * @param amount                  the payment amount
+     * @param currencyCode            the ISO 4217 currency code
+     * @param reference               the payment reference
+     * @param paymentMethodReference   the payment method reference
+     */
     public PaymentDto(PaymentDtoType type, String providerName, Date paymentDate, double amount, String currencyCode, String reference, String paymentMethodReference) {
         this();
         this.type = type;

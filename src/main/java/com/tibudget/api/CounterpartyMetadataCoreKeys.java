@@ -3,8 +3,8 @@ package com.tibudget.api;
 /**
  * Defines the built-in metadata keys supported by Tibu for counterparties.
  * <p>
- * These metadata keys are considered core and are guaranteed to be
- * recognized and supported by the Tibu platform.
+ * These metadata keys are considered core and are guaranteed to be recognized
+ * and supported by the Tibu platform.
  * <p>
  * Each metadata key defines:
  * <ul>
@@ -57,10 +57,10 @@ public enum CounterpartyMetadataCoreKeys {
     ),
 
     /**
-     * Counterparty originating from OpenStreetMap.
+     * Counterparty originating from Sirene (INSEE).
      * <p>
-     * The value represents the OSM identifier.
-     * Examples: node/123, way/12345, relation/123456789.
+     * The value represents the Sirene identifier.
+     * Example: 123456789.
      */
     SOURCE_SIRENE(
             "tibu:source:sirene",
@@ -119,6 +119,16 @@ public enum CounterpartyMetadataCoreKeys {
     LONGITUDE(
             "tibu:longitude",
             "Longitude of the counterparty location",
+            true,
+            false
+    ),
+
+    /**
+     * Precision of latitude and longitude data; 1 means a radius of 10 meters, 2 means 20 meters, etc.
+     */
+    RADIUS_10M(
+            "tibu:radius:10m",
+            "Precision of latitude and longitude data; 1 means a radius of 10 meters, 2 means 20 meters, etc.",
             true,
             false
     ),
@@ -308,6 +318,8 @@ public enum CounterpartyMetadataCoreKeys {
 
     /**
      * Returns the unique identifier of the metadata key.
+     *
+     * @return the metadata key
      */
     public String getKey() {
         return key;
@@ -315,6 +327,8 @@ public enum CounterpartyMetadataCoreKeys {
 
     /**
      * Returns the functional description of the metadata.
+     *
+     * @return the metadata description
      */
     public String getDescription() {
         return description;
@@ -322,6 +336,8 @@ public enum CounterpartyMetadataCoreKeys {
 
     /**
      * Indicates whether the metadata value is numeric.
+     *
+     * @return {@code true} if the value is numeric; otherwise {@code false}
      */
     public boolean isNumeric() {
         return numeric;
@@ -330,7 +346,9 @@ public enum CounterpartyMetadataCoreKeys {
     /**
      * Indicates whether the metadata value must be unique across all counterparties.
      * <p>
-     * When set to true, the same value cannot be assigned to more than one counterparty.
+     * When set to {@code true}, the same value cannot be assigned to more than one counterparty.
+     *
+     * @return {@code true} if the value must be unique; otherwise {@code false}
      */
     public boolean isUnique() {
         return unique;

@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * Data Transfer Object representing a financial transaction.
- * It contains essential information about an transaction, such as its type, amount, dates, and associated metadata.
+ * It contains essential information about a transaction, such as its type, amount, dates, and associated metadata.
  */
 public class TransactionDto implements Serializable {
 
@@ -20,19 +20,19 @@ public class TransactionDto implements Serializable {
     public enum TransactionDtoType {
         /**
          * A purchase transaction, representing a payment made at a store (either online or physical).
-         * This type of transaction is always linked to a {@link #PAYMENT} transaction.
+         * This type of transaction is always linked to a {@link TransactionDtoType#PAYMENT} transaction.
          */
         PURCHASE,
 
         /**
          * A payment transaction, representing a withdrawal from a bank account.
-         * This type of transaction is often linked to a {@link #PURCHASE} transaction but can also be linked to another
-         * {@link #PAYMENT} transaction (when buying with a digital wallet for exemple bank -> paypal -> store).
+         * This type of transaction is often linked to a {@link TransactionDtoType#PURCHASE} transaction but can also be linked to another
+         * {@link TransactionDtoType#PAYMENT} transaction (when buying with a digital wallet for exemple bank -&gt; paypal -&gt; store).
          */
         PAYMENT,
 
         /**
-         * A money transfer between accounts. This type of transaction is always linked to another {@link #TRANSFER}
+         * A money transfer between accounts. This type of transaction is always linked to another {@link TransactionDtoType#TRANSFER}
          * transaction.
          */
         TRANSFER,
@@ -41,7 +41,7 @@ public class TransactionDto implements Serializable {
          * An internal transaction applied by the account provider, such as bank fees, interest, or other adjustments.
          * This type of transaction is never linked to any other transaction.
          */
-        INTERNAL,
+        INTERNAL
     }
 
     /**
@@ -68,12 +68,12 @@ public class TransactionDto implements Serializable {
     }
 
     /**
-     * Common metadata keys : Reference of this transaction (transaction ID for exemple)
+     * Common metadata keys: reference of this transaction (transaction ID for example).
      */
     public static final String METADATA_REFERENCE = "tibu:ref";
 
     /**
-     * Common metadata keys : if available and applicable, provide the check number
+     * Common metadata keys: if available and applicable, provide the check number.
      */
     public static final String METADATA_CHECK_NUMBER = "tibu:check_number";
 
@@ -170,6 +170,7 @@ public class TransactionDto implements Serializable {
      * @param label           Label of the transaction.
      * @param details         Details of the transaction.
      * @param amount          Amount of the transaction.
+     * @param currencyCode    Currency code in ISO 4217 format.
      */
     public TransactionDto(String id, String accountUuid, TransactionDtoType type, Date dateTransaction, Date dateValue,
                           String label, String details, double amount, String currencyCode) {
