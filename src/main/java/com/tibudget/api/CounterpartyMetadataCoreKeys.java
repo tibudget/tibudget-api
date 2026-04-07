@@ -34,6 +34,16 @@ public enum CounterpartyMetadataCoreKeys {
     ),
 
     /**
+     * Legal name of the counterparty.
+     */
+    LEGAL_NAME(
+            "tibu:name:legal",
+            "Legal name of the counterparty",
+            false,
+            false
+    ),
+
+    /**
      * Type of source used to create the counterparty.
      */
     SOURCE_TYPE(
@@ -139,6 +149,16 @@ public enum CounterpartyMetadataCoreKeys {
     ADDRESS(
             "tibu:address:full",
             "Full postal address",
+            false,
+            false
+    ),
+
+    /**
+     * ISO 3166-1 alpha-2 country code.
+     */
+    COUNTRY(
+            "tibu:address:country",
+            "ISO 3166-1 alpha-2 country code.",
             false,
             false
     ),
