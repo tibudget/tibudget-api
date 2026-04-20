@@ -266,7 +266,7 @@ public enum CounterpartyMetadataCoreKeys {
     ID_FR_SIRET(
             "tibu:id:fr:siret",
             "French SIRET identifier",
-            true,
+            false,
             true
     ),
 
@@ -276,7 +276,17 @@ public enum CounterpartyMetadataCoreKeys {
     ID_FR_SIREN(
             "tibu:id:fr:siren",
             "French SIREN identifier",
-            true,
+            false,
+            true
+    ),
+
+    /**
+     * French bank code.
+     */
+    ID_FR_CIB(
+            "tibu:id:fr:cib",
+            "French bank code",
+            false,
             true
     ),
 

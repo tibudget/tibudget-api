@@ -22,5 +22,5 @@ This project is still under development and is not ready for production use.
     <dependency>
         <groupId>com.github.tibudget</groupId>
         <artifactId>tibudget-api</artifactId>
-        <version>0.56</version>
+        <version>0.57</version>
     </dependency>
