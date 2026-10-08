@@ -1,6 +1,11 @@
 jdk:
   - openjdk21
+
 before_install:
   - chmod +x mvnw
+  - ./mvnw --version || true
+  - bash -x ./mvnw --version || true
+  - find ~/.m2/wrapper -type f 2>/dev/null | sort || true
+
 install:
   - ./mvnw install -P jitpack -DskipTests -B
