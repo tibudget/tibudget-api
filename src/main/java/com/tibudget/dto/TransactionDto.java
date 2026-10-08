@@ -135,6 +135,11 @@ public class TransactionDto implements Serializable {
     private String label;
 
     /**
+     * Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
+    private String labelOriginal;
+
+    /**
      * Limited to {@link #DETAILS_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
      */
     private String details;
@@ -181,6 +186,22 @@ public class TransactionDto implements Serializable {
         this.dateValue = dateValue;
         this.details = details;
         this.label = label;
+        this.labelOriginal = label;
+        this.type = type;
+        this.amount = amount;
+        this.currencyCode = currencyCode;
+    }
+
+    public TransactionDto(String id, String accountUuid, TransactionDtoType type, Date dateTransaction, Date dateValue,
+                          String label, String labelOriginal, String details, double amount, String currencyCode) {
+        this();
+        this.id = id;
+        this.accountUuid = accountUuid;
+        this.dateTransaction = dateTransaction;
+        this.dateValue = dateValue;
+        this.details = details;
+        this.label = label;
+        this.labelOriginal = labelOriginal;
         this.type = type;
         this.amount = amount;
         this.currencyCode = currencyCode;
@@ -246,6 +267,17 @@ public class TransactionDto implements Serializable {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getLabelOriginal() {
+        return labelOriginal;
+    }
+
+    /**
+     * @param labelOriginal Limited to {@link #LABEL_MAX_LENGTH} characters. It will be truncated, so it's better if you handle this length on your side.
+     */
+    public void setLabelOriginal(String labelOriginal) {
+        this.labelOriginal = labelOriginal;
     }
 
     public TransactionDtoType getType() {
@@ -382,29 +414,30 @@ public class TransactionDto implements Serializable {
     public boolean equals(Object o) {
         if (!(o instanceof TransactionDto)) return false;
         TransactionDto that = (TransactionDto) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(id, that.id) && Objects.equals(accountUuid, that.accountUuid) && type == that.type && Objects.equals(metadatas, that.metadatas) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(id, that.id) && Objects.equals(accountUuid, that.accountUuid) && Objects.equals(recurrentPaymentUuid, that.recurrentPaymentUuid) && type == that.type && state == that.state && Objects.equals(metadatas, that.metadatas) && Objects.equals(counterPartyUuid, that.counterPartyUuid) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(labelOriginal, that.labelOriginal) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accountUuid, type, metadatas, amount, currencyCode, dateValue, dateTransaction, label, details, locationInfos, payments, files, items);
+        return Objects.hash(id, accountUuid, recurrentPaymentUuid, type, state, metadatas, counterPartyUuid, amount, currencyCode, dateValue, dateTransaction, label, labelOriginal, details, locationInfos, payments, files, items);
     }
 
     @Override
     public String toString() {
         return "TransactionDto{" +
-                " dateTransaction=" + dateTransaction +
-                ", amount=" + amount +
-                ", currencyCode='" + currencyCode + '\'' +
-                ", label='" + label + '\'' +
+                "id='" + id + '\'' +
+                ", accountUuid='" + accountUuid + '\'' +
+                ", recurrentPaymentUuid='" + recurrentPaymentUuid + '\'' +
                 ", type=" + type +
                 ", state=" + state +
-                ", id='" + id + '\'' +
-                ", accountUuid='" + accountUuid + '\'' +
-                ", counterPartyUuid='" + counterPartyUuid + '\'' +
-                ", recurrentPaymentUuid='" + recurrentPaymentUuid + '\'' +
                 ", metadatas=" + metadatas +
+                ", counterPartyUuid='" + counterPartyUuid + '\'' +
+                ", amount=" + amount +
+                ", currencyCode='" + currencyCode + '\'' +
                 ", dateValue=" + dateValue +
+                ", dateTransaction=" + dateTransaction +
+                ", label='" + label + '\'' +
+                ", labelOriginal='" + labelOriginal + '\'' +
                 ", details='" + details + '\'' +
                 ", locationInfos=" + locationInfos +
                 ", payments=" + payments +
