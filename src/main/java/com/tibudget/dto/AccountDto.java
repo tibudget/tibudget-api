@@ -21,6 +21,11 @@ public class AccountDto implements Serializable {
         PAYMENT,
 
         /**
+         * Account of a card whose individual debits are settled later on another account.
+         */
+        CARD,
+
+        /**
          * Accounts that only store money. These accounts are not allowed to have transactions
          * of type {@link TransactionDto.TransactionDtoType#PURCHASE}.
          */
