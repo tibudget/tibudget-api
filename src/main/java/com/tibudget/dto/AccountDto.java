@@ -77,7 +77,16 @@ public class AccountDto implements Serializable {
     public static final String METADATA_LOYALTY_CARD_BG_COLOR = "tibu:loyalty_card_bg_color";
 
     /**
-     * Unique stable identifier known by the collector (iban or loyalty card number for exemple).
+     * Unique identifier for this account within the associated counterparty.
+     * <p>
+     * This identifier must be stable and independent of the collector. Different collectors
+     * collecting the same account from the same counterparty should provide the same value.
+     * <p>
+     * Depending on the account type, this can be an IBAN, an email address for a shopping
+     * account, a card number for a payment card, or another stable account identifier.
+     * <p>
+     * Its purpose is to identify and match the same account across different collectors,
+     * since multiple collectors may support the same counterparty.
      */
     private String id;
 
@@ -119,6 +128,14 @@ public class AccountDto implements Serializable {
     private Date lastUpdate;
 
     private final List<PaymentMethodDto> paymentMethods;
+
+    /**
+     * Indicates whether this account should be synchronized.
+     *
+     * If false, the collector should skip this account to avoid unnecessary synchronization,
+     * as its data will be ignored by the application.
+     */
+    private boolean syncEnabled;
 
     /**
      * This empty constructor can be usefull for tests
@@ -197,6 +214,14 @@ public class AccountDto implements Serializable {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public boolean isSyncEnabled() {
+        return syncEnabled;
+    }
+
+    public void setSyncEnabled(boolean syncEnabled) {
+        this.syncEnabled = syncEnabled;
     }
 
     public String getCurrencyCode() {
