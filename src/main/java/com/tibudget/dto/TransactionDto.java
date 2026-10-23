@@ -104,7 +104,7 @@ public class TransactionDto implements Serializable {
      * Optional UUID of the counterparty (e.g. Paypal, Amazon, etc.)
      * You can find it with the CounterpartyProvider if you have enough informations to find it.
      */
-    private String counterPartyUuid;
+    private String counterpartyUuid;
 
     /**
      * The amount of a transaction should be negative for PURCHASE or PAYMENT transactions,
@@ -312,12 +312,12 @@ public class TransactionDto implements Serializable {
         this.currencyCode = currencyCode;
     }
 
-    public String getCounterPartyUuid() {
-        return counterPartyUuid;
+    public String getCounterpartyUuid() {
+        return counterpartyUuid;
     }
 
-    public void setCounterPartyUuid(String counterPartyUuid) {
-        this.counterPartyUuid = counterPartyUuid;
+    public void setCounterpartyUuid(String counterpartyUuid) {
+        this.counterpartyUuid = counterpartyUuid;
     }
 
     /**
@@ -414,12 +414,12 @@ public class TransactionDto implements Serializable {
     public boolean equals(Object o) {
         if (!(o instanceof TransactionDto)) return false;
         TransactionDto that = (TransactionDto) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(id, that.id) && Objects.equals(accountUuid, that.accountUuid) && Objects.equals(recurrentPaymentUuid, that.recurrentPaymentUuid) && type == that.type && state == that.state && Objects.equals(metadatas, that.metadatas) && Objects.equals(counterPartyUuid, that.counterPartyUuid) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(labelOriginal, that.labelOriginal) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
+        return Double.compare(amount, that.amount) == 0 && Objects.equals(id, that.id) && Objects.equals(accountUuid, that.accountUuid) && Objects.equals(recurrentPaymentUuid, that.recurrentPaymentUuid) && type == that.type && state == that.state && Objects.equals(metadatas, that.metadatas) && Objects.equals(counterpartyUuid, that.counterpartyUuid) && Objects.equals(currencyCode, that.currencyCode) && Objects.equals(dateValue, that.dateValue) && Objects.equals(dateTransaction, that.dateTransaction) && Objects.equals(label, that.label) && Objects.equals(labelOriginal, that.labelOriginal) && Objects.equals(details, that.details) && Objects.equals(locationInfos, that.locationInfos) && Objects.equals(payments, that.payments) && Objects.equals(files, that.files) && Objects.equals(items, that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accountUuid, recurrentPaymentUuid, type, state, metadatas, counterPartyUuid, amount, currencyCode, dateValue, dateTransaction, label, labelOriginal, details, locationInfos, payments, files, items);
+        return Objects.hash(id, accountUuid, recurrentPaymentUuid, type, state, metadatas, counterpartyUuid, amount, currencyCode, dateValue, dateTransaction, label, labelOriginal, details, locationInfos, payments, files, items);
     }
 
     @Override
@@ -431,7 +431,7 @@ public class TransactionDto implements Serializable {
                 ", type=" + type +
                 ", state=" + state +
                 ", metadatas=" + metadatas +
-                ", counterPartyUuid='" + counterPartyUuid + '\'' +
+                ", counterpartyUuid='" + counterpartyUuid + '\'' +
                 ", amount=" + amount +
                 ", currencyCode='" + currencyCode + '\'' +
                 ", dateValue=" + dateValue +

@@ -104,7 +104,7 @@ public class AccountDto implements Serializable {
      * You can find it with the CounterpartyProvider or use a fixed value since UUID will be stable.
      * This value is mandatory.
      */
-    private String counterPartyUuid;
+    private String counterpartyUuid;
 
     /**
      * Currency code ISO 4217
@@ -151,13 +151,13 @@ public class AccountDto implements Serializable {
      *
      * @param type             Type of account
      * @param label            Label of the account
-     * @param counterPartyUuid Name of the bank or provider of the account
+     * @param counterpartyUuid UUID of the counterparty that own this account
      * @param currencyCode     Currency code ISO 4217
      * @param timeZoneId       Time zone of the account
      * @param currentBalance   Current balance of the account
      */
-    public AccountDto(AccountDtoType type, String label, String counterPartyUuid, String currencyCode, String timeZoneId, double currentBalance) {
-        this(UUID.randomUUID().toString(), type, label, counterPartyUuid, currencyCode, timeZoneId, currentBalance, null);
+    public AccountDto(AccountDtoType type, String label, String counterpartyUuid, String currencyCode, String timeZoneId, double currentBalance) {
+        this(UUID.randomUUID().toString(), type, label, counterpartyUuid, currencyCode, timeZoneId, currentBalance, null);
     }
 
     /**
@@ -166,18 +166,18 @@ public class AccountDto implements Serializable {
      * @param uuid             UUID of the account
      * @param type             Type of account
      * @param title            Title of the bank account
-     * @param counterPartyUuid Name of the bank or provider of the account
+     * @param counterpartyUuid UUID of the counterparty that own this account
      * @param currencyCode     Currency code ISO 4217
      * @param timeZoneId       Time zone of the account
      * @param currentBalance   Current balance of the account
      * @param lastUpdate       Last time that bank account has been updated successfully
      */
-    public AccountDto(String uuid, AccountDtoType type, String title, String counterPartyUuid, String currencyCode, String timeZoneId, double currentBalance, Date lastUpdate) {
+    public AccountDto(String uuid, AccountDtoType type, String title, String counterpartyUuid, String currencyCode, String timeZoneId, double currentBalance, Date lastUpdate) {
         this();
         this.uuid = uuid;
         this.type = type;
         this.label = title;
-        this.counterPartyUuid = counterPartyUuid;
+        this.counterpartyUuid = counterpartyUuid;
         this.currencyCode = currencyCode;
         this.currentBalance = currentBalance;
         this.timeZoneId = timeZoneId;
@@ -240,12 +240,12 @@ public class AccountDto implements Serializable {
         this.timeZoneId = timeZoneId;
     }
 
-    public String getCounterPartyUuid() {
-        return counterPartyUuid;
+    public String getCounterpartyUuid() {
+        return counterpartyUuid;
     }
 
-    public void setCounterPartyUuid(String counterPartyUuid) {
-        this.counterPartyUuid = counterPartyUuid;
+    public void setCounterpartyUuid(String counterpartyUuid) {
+        this.counterpartyUuid = counterpartyUuid;
     }
 
     public AccountDtoType getType() {
@@ -343,7 +343,7 @@ public class AccountDto implements Serializable {
                 ", uuid='" + uuid + '\'' +
                 ", type=" + type +
                 ", label='" + label + '\'' +
-                ", counterPartyUuid='" + counterPartyUuid + '\'' +
+                ", counterpartyUuid='" + counterpartyUuid + '\'' +
                 ", currencyCode='" + currencyCode + '\'' +
                 ", currentBalance=" + currentBalance +
                 '}';

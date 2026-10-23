@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface defining a collector plugin, responsible for connecting to a bank website (or other providers)
+ * Interface defining a collector plugin, responsible for connecting to a transaction providers like banks, shopping website, digital wallets, etc.
  * to collect account and transaction data.
  */
 public interface CollectorPlugin {
@@ -20,7 +20,7 @@ public interface CollectorPlugin {
     /**
      * Provides an OTP (One-Time Password) provider to the collector if required.
      *
-     * @param internetProvider The bridge to use to connect to the internet. This ensure high level of security since you will only be able to connect to the domain names that you declared when you registered your collector.
+     * @param internetProvider The bridge to use to connect to the internet. This ensures high level of security since you will only be able to connect to the domain names that you declared when you registered your collector.
      * @param counterpartyProvider Interface to find Counterparty
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
@@ -92,15 +92,29 @@ public interface CollectorPlugin {
     }
 
     /**
-     * Initiates the data collect process after successful validation.
+     * Runs the collect process.
      *
-     * @throws CollectError         if an error occurs during the collect process (e.g., parsing issues).
-     * @throws AccessDeny           if access is denied due to incorrect credentials.
-     * @throws TemporaryUnavailable if the target website is temporarily unavailable (e.g., maintenance mode).
-     * @throws ConnectionFailure    if the connection to the website fails due to network issues.
-     * @throws ParameterError       if one or more provided parameters are incorrect.
+     * <p>The collect may stop before all data has been collected, for example to respect an execution time limit.
+     * In that case, the collector must save its progress so that the next collect can resume from where it stopped.</p>
+     *
+     * @return {@code true} if the collect is complete, {@code false} if more data remains to be collected
+     * @throws CollectError if an error occurs while collecting or parsing data
+     * @throws AccessDeny if access is denied, for example because the credentials are invalid
+     * @throws TemporaryUnavailable if the target service is temporarily unavailable, for example during maintenance
+     * @throws ConnectionFailure if the connection to the target service fails
+     * @throws ParameterError if one or more collector parameters are invalid
      */
-    void collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
+    boolean collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
+
+    /**
+     * Requests the collector to stop the current collect as soon as possible.
+     *
+     * <p>The collector must stop gracefully and save its current progress before returning from {@link #collect()},
+     * so that the next collect can resume from where it stopped.</p>
+     *
+     * <p>This method does not interrupt or forcibly terminate the collect.</p>
+     */
+    void stop();
 
     /**
      * Retrieves the settings to be stored after a collect or connection.
