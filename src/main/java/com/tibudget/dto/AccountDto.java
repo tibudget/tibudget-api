@@ -131,7 +131,7 @@ public class AccountDto implements Serializable {
 
     /**
      * Indicates whether this account should be synchronized.
-     *
+     * <p>
      * If false, the collector should skip this account to avoid unnecessary synchronization,
      * as its data will be ignored by the application.
      */

@@ -18,7 +18,7 @@ import java.util.Map;
 public interface CollectorPlugin {
 
     /**
-     * Provides an OTP (One-Time Password) provider to the collector if required.
+     * Provides everything the collector will need to perform the collect and also data to resume from the last collect.
      *
      * @param internetProvider The bridge to use to connect to the internet. This ensures high level of security since you will only be able to connect to the domain names that you declared when you registered your collector.
      * @param counterpartyProvider Interface to find Counterparty
@@ -72,7 +72,7 @@ public interface CollectorPlugin {
     }
 
     /**
-     * Retrieves the Datadome client ID associated with the current plugin if any. It will be used to generated the
+     * Retrieves the Datadome client ID associated with the current plugin if any. It will be used to generate the
      * datadome cookie.
      *
      * @return the Datadome client ID or {@code null} if no ID is available.
@@ -107,7 +107,8 @@ public interface CollectorPlugin {
     boolean collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
 
     /**
-     * Requests the collector to stop the current collect as soon as possible.
+     * Requests the collector to stop the current collect as soon as possible BUT at least after a first transaction
+     * has been synchronized.
      *
      * <p>The collector must stop gracefully and save its current progress before returning from {@link #collect()},
      * so that the next collect can resume from where it stopped.</p>
