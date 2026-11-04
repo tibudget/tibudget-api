@@ -48,6 +48,20 @@ public interface InternetProvider {
     Response downloadFile(String url, Map<String, String> headers, String forceContentType) throws IOException;
 
     /**
+     * Downloads a file from a POST request and saves it to a destination given in the response body. The type of file will be automatically determined.
+     *
+     * @param url full URL to request
+     * @param headers optional request headers
+     * @param forceContentType Expected mime type of the document, e.g. "application/pdf". It is highly recommanded to
+     *                         define it but if you don't the app will try to guess it (maybe wrong).
+     * @param body request payload
+     * @param bodyContentType MIME type of the request payload
+     * @return response with the local file path in body and download MIME type in headers
+     * @throws IOException when the download fails or the provider does not support POST downloads
+     */
+    Response downloadFile(String url, Map<String, String> headers, String forceContentType, String body, String bodyContentType) throws IOException;
+
+    /**
      * Represents an HTTP response including body, headers
      */
     class Response implements Serializable {

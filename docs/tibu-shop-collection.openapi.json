@@ -1,0 +1,946 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tibu direct shop collection API",
+    "version": "1.3.0",
+    "description": "Direct device-to-shop protocol, independent of the central API. Compatible with PrestaShop 1.7–9 and PHP 5.6 syntax. Production requires HTTPS. Tokens are JSON body credentials (redact bodies in proxy logs). No cookies or CSRF tokens are required. GET installation verification and merchant callbacks retain their existing behavior.\n\nImport accounts then upsert transactions using (accountUuid,id), then persist settings atomically with imported data. Retries are at-least-once and may return the same stable transactions. A completed response retains progress for future incremental collection. Call again immediately while hasMore=true; otherwise poll later. Never advance settings from a failed HTTP response. A partial order failure returns completed transactions, order_error and a warning; failed order IDs stay in a retry queue inside the opaque state while other orders continue; completed results are preserved. Report persistent warnings rather than looping indefinitely.\n\nOrders are traversed by (date_upd,id_order), ascending, restricted to the authenticated customer and current shop. A two-second safety lag excludes in-flight current-second updates. At the end of a scan, the timestamp boundary is checked again on the next poll to catch ties and late changes. Fingerprints suppress unchanged transactions at that boundary. IDs in progress cover successfully emitted orders on the calendar date of lastOrderDate; they are diagnostic, not a deduplication instruction. Settings contain the encrypted authenticated cursor (bound to customer, shop, installation and token), date and day IDs. The app forwards this state without interpretation. Changed existing orders are upserts, not new purchases. SQL/invoice or third-party module updates that do not touch orders.date_upd require a fresh full import. Historical hard deletions and refund credit slips are not exported by this version.\n\nCollection uses timeoutMs as a cooperative wall-clock processing timeout (default 5 s, maximum 10 s), reduced according to remaining PHP request execution time, with a 2 s response reserve. It stops between orders before the deadline, or before maxResponseMb MiB of complete uncompressed JSON. One unusually slow SQL query, hook or PDF rendering cannot be interrupted portably on all supported PHP/database versions: configure database and reverse-proxy timeouts accordingly. PDFs are excluded from the batch budget and fetched separately. Returned settings are limited to 1 MiB (larger states receive STATE_TOO_LARGE; the client must report this rather than endlessly retrying). Optional item/invoice descriptor failures are logged and returned as warnings; valid orders remain collected and are queued for retry. Retry work is bounded and persistent failures rotate through the queue so they do not starve the regular scan. No public invoice URLs, secure_key or personal addresses are exposed.\n\nOne SHOPPING account per customer and currency (default currency included even for no orders). UUIDs are deterministic and scoped by installation/customer/currency. Account IDs are the immutable PrestaShop customer ID as a string, with no prefix or currency suffix, for example 5. Account UUIDs still distinguish currency-specific accounts. Customer email changes do not change account identity. Transaction IDs are the plain public order reference. All delivery rows sharing a reference within the authenticated customer and shop are aggregated into one purchase, including amounts, items and invoices. Account labels use shop name. Uncharged cancelled delivery rows do not contribute to the purchase amount. Only an entirely cancelled, uncharged purchase is emitted as a DELETED tombstone; it removes any previously pending purchase. Paid cancellations remain COMPLETED; refund accounting requires credit slips and is outside this version. No speculative payment types or recurring payments are inferred. Dates are RFC 3339 in the configured shop timezone; decimal amounts use order currency without conversion. Generic file descriptors contain type, label and exactly one of href (public GET) or attachmentId (protected POST action=attachment). Read Content-Type from download headers and adapt the bytes to a device-local FileDto. Product images are now included on item.files; invoice descriptors use attachmentId. No binary content is embedded in collection JSON.\n\nAll accounts are collected. There is no account exclusion parameter or response order-count limit. maxResponseMb defaults to 2 and includes the complete collection JSON envelope, including settings and warnings. SQL pages of 100 rows are an internal memory optimization only. recurringPayments uses the complete RecurringPaymentDto schema; this PrestaShop core implementation returns [] because no subscription schedule is available.\n\nUse the returned settings only after importing the response and handling its document downloads. If Tibu fails before committing, replay the previous settings and redownload the stable descriptors. Public product images can be removed from the catalog; treat a permanent missing optional photo as a warning rather than discarding a valid order. A transient protected download failure can be retried with the same attachmentId and accessToken."
+  },
+  "servers": [
+    {
+      "url": "http://ps821.local"
+    },
+    {
+      "url": "https://{shopHost}",
+      "variables": {
+        "shopHost": {
+          "default": "shop.example"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/module/tibudget/endpoint": {
+      "post": {
+        "operationId": "tibuShopRequest",
+        "summary": "Collect purchases, exchange a temporary token, or download a protected attachment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CollectRequest"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "token": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "description": "Opaque temporary token from the QR deep link. Expires after five minutes and can be exchanged only once. This operation returns a permanent accessToken, not collection data."
+                      }
+                    },
+                    "required": [
+                      "token"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "$ref": "#/components/schemas/AttachmentRequest"
+                  }
+                ]
+              },
+              "examples": {
+                "firstCollection": {
+                  "summary": "Start a full collection of all accounts",
+                  "value": {
+                    "accessToken": "tibu_customer_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "settings": {},
+                    "timeoutMs": 5000,
+                    "maxResponseMb": 2
+                  }
+                },
+                "continuedCollection": {
+                  "summary": "Continue using exactly the last successfully imported settings",
+                  "value": {
+                    "accessToken": "tibu_customer_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "settings": {
+                      "tibu.collect.state": "<unchanged opaque JSON string from last response>"
+                    },
+                    "timeoutMs": 5000,
+                    "maxResponseMb": 2
+                  }
+                },
+                "attachmentDownload": {
+                  "summary": "Download a protected document with its returned attachmentId",
+                  "value": {
+                    "accessToken": "tibu_customer_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "action": "attachment",
+                    "attachmentId": "invoice:42"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Collection batch or token exchange JSON, or raw protected attachment bytes. The download MIME type is carried in the HTTP Content-Type header (application/pdf for current invoice attachments). Partial collection batches remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CollectResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/AccessToken"
+                            }
+                          ],
+                          "description": "Permanent token returned once after a successful temporary-token exchange. Store it securely on the device and use it for later collection and invoice requests. The shop stores only its hash."
+                        }
+                      },
+                      "required": [
+                        "accessToken"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON, mixed operations, invalid settings or out-of-range option.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked customer access token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Inactive module/merchant installation or unavailable customer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Attachment not found, malformed/unsupported attachmentId, or outside the authenticated customer and shop. Returns ATTACHMENT_NOT_FOUND without revealing existence.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported HTTP method. Allow: GET, POST.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Customer already connected (exchange only).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Temporary token expired or already used (exchange only).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 2 MiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type must be application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected internal failure or JSON serialization failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage/processing unavailable; retry with unchanged settings. Retry-After: 5.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessToken": {
+        "type": "string",
+        "pattern": "^tibu_customer_[A-Za-z0-9_-]{43}$",
+        "description": "Permanent token from the existing one-use mobile exchange. Never log it."
+      },
+      "Settings": {
+        "type": "object",
+        "maxProperties": 50,
+        "additionalProperties": {
+          "type": "string",
+          "maxLength": 1048576
+        },
+        "description": "Map<String,String>. Persist the returned map only after successfully importing the entire response. Send it unchanged on the next request. tibu.collect.state is an authenticated opaque JSON string; never parse or modify it. An empty map starts a full import. Do not store accessToken here."
+      },
+      "CollectRequest": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccessToken"
+              }
+            ],
+            "description": "Permanent customer credential returned by QR pairing with this exact shop. It identifies the customer without a browser session. Never send it in URLs or logs."
+          },
+          "settings": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Settings"
+              }
+            ],
+            "description": "Settings map from the last successfully imported response, forwarded unchanged. Use an empty object for a full import. Commit it atomically with accounts and transactions."
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 10000,
+            "default": 5000,
+            "description": "Cooperative collection processing timeout in milliseconds, starting when token authentication begins. The shop reserves two seconds before PHP execution expiry and checks the deadline between orders and SQL batches. The HTTP client should allow extra time for bootstrap, one in-flight SQL operation and response transfer. PHP/database versions cannot portably interrupt an individual blocking operation."
+          },
+          "maxResponseMb": {
+            "type": "integer",
+            "description": "Maximum size of the entire uncompressed collection JSON response, including accounts, transactions, recurringPayments, warnings and settings. One unit is 1,048,576 bytes (MiB). The shop may stop slightly early to reserve space for encrypted state. This limit does not apply to separate PDF downloads. If metadata alone cannot fit, increase the limit after RESPONSE_LIMIT_TOO_SMALL.",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 2,
+            "example": 2
+          }
+        },
+        "required": [
+          "accessToken"
+        ],
+        "additionalProperties": false,
+        "description": "Collect every synchronized account and changed order of the authenticated customer in this shop. The presence of accessToken selects collection; no action is needed. Processing stops only for timeout, response size or recoverable errors, never for a public order-count limit."
+      },
+      "CollectResponse": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Settings"
+              }
+            ],
+            "description": "Map returned by getSettings(). Import the entire response successfully before persisting it. Forward every entry unchanged on the next request; never merge only selected cursor fields."
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Account"
+            },
+            "description": "Accounts returned by getAccounts(). Includes every synchronized shopping account, even when there are no new transactions. Import these first so transaction and recurring-payment accountUuid links can resolve."
+          },
+          "transactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "description": "New or changed purchases returned by getTransactions(). One purchase per public order reference within the customer and shop, aggregating split delivery rows. Upsert by (accountUuid,id). Old settings may replay purchases, so imports must be idempotent."
+          },
+          "recurringPayments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecurringPayment"
+            },
+            "description": "Schedules returned by getRecurringPayments(), represented by the full RecurringPaymentDto schema. Upsert by (accountUuid,id) and preserve uuid across collections. An empty list means no known schedules, not deletion of previously imported schedules. This PrestaShop core implementation returns [] because core orders do not define a subscription schedule; no recurrence is inferred from repeated purchases."
+          },
+          "hasMore": {
+            "type": "boolean",
+            "description": "True when the client should continue with the returned settings. Stop immediate collection when false; poll later with the same saved settings. Back off and report persistent order_error warnings."
+          },
+          "stopReason": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "time_budget",
+              "response_limit",
+              "order_error"
+            ],
+            "description": "complete: scan finished; time_budget: timeoutMs or PHP safety deadline reached; response_limit: maxResponseMb reached; order_error: completed data was preserved but one or more orders need retry. Every partial success still uses HTTP 200."
+          },
+          "progress": {
+            "type": "object",
+            "properties": {
+              "lastOrderDate": {
+                "type": "string",
+                "nullable": true,
+                "description": "Last scanned orders.date_upd in shop local time, formatted YYYY-MM-DD HH:mm:ss. Null before any order is scanned. Failed orders can precede this position because their IDs remain in the opaque retry queue. Use settings rather than reconstructing a cursor from this value."
+              },
+              "collectedOrderIdsOnDate": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "description": "Unique PrestaShop order IDs successfully emitted on the calendar date of lastOrderDate, in shop local time. Resets when the scan advances to another day. Diagnostic only: an existing order may legitimately need an upsert after a later modification."
+              },
+              "lastOrderId": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "PrestaShop id_order at the scan position. It disambiguates orders with identical modification timestamps. Zero means no order has been scanned yet."
+              }
+            },
+            "required": [
+              "lastOrderDate",
+              "lastOrderId",
+              "collectedOrderIdsOnDate"
+            ],
+            "description": "Human-readable scan diagnostics. The authenticated resume state in settings is authoritative; do not build a resume token from these fields."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Fixed warning category, currently ORDER_UNAVAILABLE, ITEM_UNAVAILABLE, ITEMS_UNAVAILABLE, IMAGE_UNAVAILABLE, IMAGES_UNAVAILABLE or INVOICES_UNAVAILABLE. No raw database message or credential is included."
+                },
+                "orderId": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "PrestaShop order identifier associated with the warning. Use it with the requestId and server logs to find the failing order."
+                }
+              },
+              "required": [
+                "code",
+                "orderId"
+              ]
+            },
+            "description": "Recoverable per-order errors. Keep valid transactions and correlate orderId with server logs. Persistent warnings should be reported rather than retried in a tight loop."
+          }
+        },
+        "required": [
+          "settings",
+          "accounts",
+          "transactions",
+          "recurringPayments",
+          "hasMore",
+          "stopReason",
+          "progress",
+          "warnings"
+        ]
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable provider-side customer identifier, represented as the decimal PrestaShop id_customer string, for example \"5\". No prefix, email or currency suffix is added. The same customer ID is returned for its currency-specific accounts; their UUIDs remain distinct and are used for transaction links. This is not the Tibu account UUID. Changing the customer email does not change either identifier.",
+            "example": "5",
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Tibu account UUID used by TransactionDto.accountUuid and RecurringPaymentDto.accountUuid. Must remain stable across collections and retries. This shop derives it deterministically from installation UUID, customer ID and currency ID.",
+            "example": "6c85ca17-1f26-5149-adb0-7d482921f46d"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SHOPPING"
+            ],
+            "description": "Account category. SHOPPING stores merchant purchases and their documents; it is not a bank account or a wallet."
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable account name, at most 100 characters. This implementation uses the shop name.",
+            "maxLength": 100
+          },
+          "counterpartyUuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Mandatory Tibu UUID identifying the merchant/counterparty. Comes from the merchant authorization (TIBUDGET_EXT_COUNTERPARTY); it is not an installation UUID or a shop ID."
+          },
+          "currencyCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 currency code, for example EUR or GBP. Every linked transaction uses this same currency. Amounts are never converted between currencies."
+          },
+          "timeZoneId": {
+            "type": "string",
+            "description": "IANA timezone ID of the account, for example Europe/Paris. Used to interpret provider-local dates."
+          },
+          "currentBalance": {
+            "type": "number",
+            "description": "Current account balance in account currency. Always zero for this shopping account; order totals must not be added together to invent a wallet balance."
+          },
+          "metadatas": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Optional string metadata using the exact AccountDto key spelling. Use {} when absent. For example tibu:iban applies to a bank account, not to this shopping account."
+          },
+          "lastUpdate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 timestamp at which this account was included in a successful collection response. The app should only commit it after importing the response."
+          },
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            },
+            "description": "Known payment instruments associated with the account. This implementation returns [] because it does not infer instruments from order payment labels."
+          },
+          "syncEnabled": {
+            "type": "boolean",
+            "description": "Whether the account participates in synchronization. This endpoint currently collects all accounts and always returns true; there is no account exclusion request parameter."
+          }
+        },
+        "required": [
+          "id",
+          "uuid",
+          "type",
+          "label",
+          "counterpartyUuid",
+          "currencyCode",
+          "timeZoneId",
+          "currentBalance",
+          "syncEnabled"
+        ],
+        "description": "Shopping account mapped to AccountDto. This shop returns one account per customer and order currency, always including the default shop currency."
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The exact public PrestaShop order reference, for example QBYZMPYCF, without a prefix or internal order ID. All delivery rows sharing this reference within the authenticated customer and shop form one purchase. The amount, active item lines and invoice descriptors are combined before emission. Upsert by (accountUuid,id), so additional deliveries never create extra purchases.",
+            "example": "QBYZMPYCF",
+            "minLength": 1
+          },
+          "accountUuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID of the owning account, which must be present in this response accounts list. Account currency and transaction currencyCode must agree."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PURCHASE"
+            ],
+            "description": "PURCHASE for merchant orders. A corresponding bank debit is a separate PAYMENT transaction; do not emit a second payment transaction here for the same order."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "COMPLETED",
+              "PENDING",
+              "DELETED"
+            ],
+            "description": "For the aggregated purchase: DELETED when every delivery is cancelled/error and uncharged; PENDING when any remaining delivery is pending; otherwise COMPLETED. A cancelled uncharged delivery alone must not delete the entire purchase."
+          },
+          "counterpartyUuid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Tibu merchant UUID, identical to the associated shopping account counterpartyUuid."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Signed aggregate total of the non-deleted delivery rows sharing the reference, including each row historical tax, shipping and discounts. Expenses are negative. Uncharged cancelled/error deliveries are excluded; paid cancellations remain purchases until a real refund is known. All deliveries must use the same currency: inconsistent mixed-currency references are reported as an order error rather than converted. An entirely deleted purchase has amount 0."
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "ISO 4217 currency of the original order and its linked account. No conversion is performed."
+          },
+          "dateTransaction": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 creation timestamp of the earliest order/delivery row sharing this reference, in the shop timezone. It is not the date of the latest shipment or modification."
+          },
+          "dateValue": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 execution/value date. PrestaShop orders do not reliably expose a bank value date, so this implementation uses the order creation time as a documented fallback."
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Display label built from historical item names, limited to 100 characters. Falls back to Order <shop name> <reference> when item names are unavailable."
+          },
+          "labelOriginal": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Original provider display label, limited to 100 characters. This implementation uses the same value as label."
+          },
+          "details": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Optional human-readable description, limited to 1000 characters. This implementation includes the original order reference."
+          },
+          "metadatas": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "String metadata. tibu:ref contains the original public order reference and is the same value as transaction.id."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            },
+            "description": "Combined historical item lines from all active delivery rows of this purchase. Cancelled uncharged deliveries are excluded. The order total also includes shipping and discounts, so unit prices need not sum to the final amount. Missing optional item details must not discard the purchase."
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            },
+            "description": "Combined generic document descriptors from all delivery rows sharing the purchase reference. Numbered invoices use type=INVOICE, label and an opaque attachmentId. Fetch them through the attachment operation with the same customer token and read the MIME type from the HTTP Content-Type header. Additional documents/invoices never create extra purchases."
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payment"
+            },
+            "description": "PaymentDto details, when actually known. This implementation returns []; payment type, method references and settlement allocations must not be guessed from free-text labels."
+          },
+          "recurrentPaymentUuid": {
+            "type": "string",
+            "description": "Optional UUID of the schedule that caused this transaction, matching RecurringPayment.uuid. The DTO property spelling is recurrentPaymentUuid (not recurringPaymentUuid). Omitted for ordinary PrestaShop orders.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "accountUuid",
+          "type",
+          "state",
+          "amount",
+          "currencyCode",
+          "dateTransaction",
+          "dateValue",
+          "label",
+          "metadatas",
+          "items",
+          "files",
+          "payments"
+        ],
+        "description": "One merchant purchase mapped to TransactionDto, aggregating every delivery/order row with the same public reference for this customer and shop. Changes to any delivery replace/upsert the entire purchase using the same reference ID."
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Historical purchased product/variant title from the order, not the current catalog title."
+          },
+          "price": {
+            "type": "number",
+            "description": "Historical unit price including tax in the transaction currency, before order-level discounts. Multiply by quantity for the line total; this is not the final order total."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Purchased quantity as recorded on the order. Core PrestaShop product quantities are counts, represented as numbers for ItemDto compatibility."
+          },
+          "quantityUnit": {
+            "type": "string",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "UNIT for countable PrestaShop order products. Do not infer mass or volume units from product names."
+          },
+          "references": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "ProductReferenceType-to-string map from ItemDto. SKU is the merchant product reference; EAN is the product barcode when available. Missing references use {}. Preserve reference values as strings to retain leading zeroes."
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            },
+            "description": "Generic file descriptors associated with this historical line item. The shop includes an IMAGE with a public GET href for the purchased combination image when available, otherwise the product cover (or first available shop image). Uses the current catalog photo, not a stored historical snapshot. Missing photos yield an empty list and never remove the item. Other protected item documents may use attachmentId with the same generic schema."
+          }
+        },
+        "required": [
+          "label",
+          "price",
+          "quantity",
+          "quantityUnit",
+          "references",
+          "files"
+        ]
+      },
+      "File": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Generic downloadable FileDto descriptor for transaction and item files. Required type and label, plus exactly one download locator: public GET href or authenticated attachmentId. No contentType or binary content is embedded here. Download bytes, read Content-Type from HTTP response headers, save to a device-local temporary file and create FileDto(type,label,responseContentType,file). Keep credentials off public GET requests. Store collection settings only after successful import and required downloads; transient failures can replay the previous settings. Missing optional files must not discard a valid purchase.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "IMAGE",
+              "INVOICE",
+              "RECEIPT_PAYMENT",
+              "RECEIPT_CASHIER",
+              "CONTRACT",
+              "NOTICE",
+              "OTHER"
+            ],
+            "description": "Functional FileDto category, independent of MIME type. IMAGE is typically a purchased product photo; INVOICE is a formal invoice document."
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable document/photo title. It is not a filename, URL, MIME type or authentication credential."
+          },
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://",
+            "description": "Absolute HTTP(S) URL downloadable with a plain GET without shop cookies, request body or customer accessToken. Can point to the shop or its media CDN. Use only when public GET is supported; omit attachmentId. Use the actual download Content-Type header to create FileDto. A product photo reflects the current catalog and may be unavailable if removed."
+          },
+          "attachmentId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable opaque document identifier to forward unchanged in POST {accessToken, action: attachment, attachmentId} to this same endpoint. Omit href. The shop validates customer/shop ownership and sends document bytes with Content-Type in the HTTP headers. It does not require an expiring temporary PDF file; invoices are generated from source data on demand. Never parse, reconstruct or treat this value as a public URL."
+          }
+        },
+        "required": [
+          "type",
+          "label"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "href"
+            ]
+          },
+          {
+            "required": [
+              "attachmentId"
+            ]
+          }
+        ],
+        "example": {
+          "type": "IMAGE",
+          "label": "Purchased product photo",
+          "href": "https://shop.example/img/p/1/1.jpg"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "Stable machine-readable category; use it for application behavior instead of matching errorMessage text."
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Fixed safe explanation suitable for display or diagnostics. Does not contain raw SQL, exception payloads or credentials."
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Correlation identifier shared by the response and shop server logs. Include it when reporting a failed request."
+          }
+        },
+        "required": [
+          "errorCode",
+          "errorMessage"
+        ]
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "description": "PaymentMethodDto describing a known instrument. The current shop implementation returns an empty account.paymentMethods list.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Known payment category; do not infer it from an ambiguous label.",
+            "enum": [
+              "CASH",
+              "CARD",
+              "CHECK",
+              "TRANSFER",
+              "GIFT_CARD",
+              "STORE_CREDIT",
+              "DIGITAL_WALLET"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "description": "Instrument reference. For CARD, only the last four digits; for TRANSFER, CHECK, CASH, GIFT_CARD and STORE_CREDIT leave empty as specified by PaymentMethodDto. Never return a full card number.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "Payment": {
+        "type": "object",
+        "description": "PaymentDto describing a known settlement of a purchase. Optional; this implementation returns an empty transaction.payments list.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Known payment category.",
+            "enum": [
+              "CASH",
+              "CARD",
+              "CHECK",
+              "TRANSFER",
+              "GIFT_CARD",
+              "STORE_CREDIT",
+              "DIGITAL_WALLET"
+            ]
+          },
+          "providerName": {
+            "type": "string",
+            "description": "Payment provider display name, for example Visa or PayPal. Unknown providers may be omitted.",
+            "nullable": true
+          },
+          "paymentDate": {
+            "type": "string",
+            "description": "RFC 3339 timestamp when this payment was made, if known.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "description": "Signed payment amount in currencyCode, from the customer perspective. An expense is negative. Do not duplicate the entire order total across several settlement entries."
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "ISO 4217 payment currency.",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Provider-side payment/settlement reference, not the order reference unless the provider actually uses the same value.",
+            "nullable": true
+          },
+          "paymentMethodReference": {
+            "type": "string",
+            "description": "Reference of the instrument used: last four digits for CARD, destination IBAN for TRANSFER, check number for CHECK; empty for CASH, GIFT_CARD and STORE_CREDIT. Never expose a full card number.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "type",
+          "amount",
+          "currencyCode"
+        ]
+      },
+      "RecurringPayment": {
+        "type": "object",
+        "description": "Complete wire representation of RecurringPaymentDto. Represents an explicit subscription, installment plan or other known recurring schedule. Do not infer one from a few similar orders. Core PrestaShop does not provide this information, so this module currently returns an empty recurringPayments list; the protocol schema remains usable by providers that do have schedules.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable provider-side schedule identifier within the account. Upsert using (accountUuid,id); never generate a new id for each collection.",
+            "example": "subscription:42"
+          },
+          "uuid": {
+            "type": "string",
+            "description": "Tibu UUID for this schedule. Generate it once and preserve it across collections. Transactions link to this value using recurrentPaymentUuid.",
+            "format": "uuid",
+            "example": "23925ce7-1130-4c38-8215-50b90ab3168e"
+          },
+          "accountUuid": {
+            "type": "string",
+            "description": "UUID of the owning account, which must be present in accounts. The schedule uses that account currency; RecurringPaymentDto has no currencyCode field.",
+            "format": "uuid",
+            "example": "6c85ca17-1f26-5149-adb0-7d482921f46d"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable schedule name, for example a monthly subscription name.",
+            "example": "Monthly subscription"
+          },
+          "expectedAmount": {
+            "type": "number",
+            "description": "Expected signed amount per recurrence in the account currency. Negative for an expense, positive for income. Null for a variable or unknown amount.",
+            "nullable": true,
+            "example": -19.99
+          },
+          "acceptableAmountVariationRatio": {
+            "type": "number",
+            "description": "Acceptable relative variation as a ratio, not a percentage: 0.05 means plus or minus 5%. Use 0 for a fixed expected amount and null when no variation monitoring is requested.",
+            "minimum": 0,
+            "nullable": true,
+            "example": 0
+          },
+          "dateStart": {
+            "type": "string",
+            "description": "RFC 3339 date when the schedule began or is expected to begin; null if unknown.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateEnd": {
+            "type": "string",
+            "description": "RFC 3339 schedule end date. Null means no known end date, not that the schedule is ended.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "recurrenceInterval": {
+            "type": "integer",
+            "description": "Repeat every N recurrenceUnit units: 1 MONTH means monthly; 3 MONTH means quarterly. Must be positive.",
+            "minimum": 1,
+            "example": 1
+          },
+          "recurrenceUnit": {
+            "type": "string",
+            "description": "Calendar/time unit used with recurrenceInterval.",
+            "enum": [
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "YEAR"
+            ],
+            "example": "MONTH"
+          },
+          "state": {
+            "type": "string",
+            "description": "ACTIVE: ongoing or scheduled to start; PAUSED: temporarily suspended without cancellation; ENDED: permanently stopped. Omission from a batch is not an ENDED update.",
+            "enum": [
+              "ACTIVE",
+              "PAUSED",
+              "ENDED"
+            ],
+            "example": "ACTIVE"
+          },
+          "resumeDate": {
+            "type": "string",
+            "description": "Expected RFC 3339 restart date when state is PAUSED. Null if unknown or the pause is indefinite; normally null for ACTIVE and ENDED schedules.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "uuid",
+          "accountUuid",
+          "label",
+          "recurrenceInterval",
+          "recurrenceUnit",
+          "state"
+        ]
+      },
+      "AttachmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Download a protected document using an attachmentId returned by File. The response body contains raw bytes, not JSON or Base64. Inspect the HTTP Content-Type header. The same permanent customer accessToken authorizes this operation without a browser session.",
+        "properties": {
+          "accessToken": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccessToken"
+              }
+            ],
+            "description": "Permanent customer token returned by pairing. Required to validate document ownership in the current shop; never send it to a public href."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "attachment"
+            ],
+            "description": "Selects binary attachment download instead of JSON collection."
+          },
+          "attachmentId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque identifier copied exactly from files[].attachmentId. The current shop represents invoices as invoice:<id_order_invoice>, but clients must not depend on that internal namespace. Unknown and foreign document IDs receive the same 404.",
+            "example": "invoice:42"
+          }
+        },
+        "required": [
+          "accessToken",
+          "action",
+          "attachmentId"
+        ]
+      }
+    }
+  }
+}
