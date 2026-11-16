@@ -3,10 +3,9 @@ package com.tibudget.api.exceptions;
 import com.tibudget.dto.MessageDto.MessageType;
 
 /**
- * Throw this exception when the service you want
- * to connect is temporary unavalaible, that means
- * the host can be reach but the service you need
- * is closed for maintenance or whatever reason.
+ * Raised when the remote site responds and explicitly indicates that the
+ * operation should be retried later, for example during maintenance.
+ * A network failure alone does not indicate temporary unavailability.
  */
 public class TemporaryUnavailable extends MessagesException {
 

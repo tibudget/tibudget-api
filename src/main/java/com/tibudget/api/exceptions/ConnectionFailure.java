@@ -3,9 +3,8 @@ package com.tibudget.api.exceptions;
 import com.tibudget.dto.MessageDto.MessageType;
 
 /**
- * Throw this exception when you cannot connect
- * to the remote host for unknown reason (no internet
- * connection, remote host does not respond, etc.)
+ * Raised when communication with the remote site fails because of a network
+ * problem, such as a DNS failure, connection failure, or timeout.
  */
 public class ConnectionFailure extends MessagesException {
 

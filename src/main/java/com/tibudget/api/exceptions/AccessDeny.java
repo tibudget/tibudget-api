@@ -3,8 +3,9 @@ package com.tibudget.api.exceptions;
 import com.tibudget.dto.MessageDto.MessageType;
 
 /**
- * Throw this exception when user credentials
- * are wrong or do not permit the operation.
+ * Raised only when the remote site explicitly rejects authentication.
+ * A network failure, an explicit request to retry later, or invalid local
+ * parameters must use the corresponding exception instead.
  */
 public class AccessDeny extends MessagesException {
 

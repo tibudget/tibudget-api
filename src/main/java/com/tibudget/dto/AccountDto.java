@@ -309,6 +309,10 @@ public class AccountDto implements Serializable {
         }
     }
 
+    /**
+     * Compares accounts by UUID. Without a UUID, only the same instance is equal.
+     * Do not change the UUID while this object is a hash-based collection key or element.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true; // Compare by reference

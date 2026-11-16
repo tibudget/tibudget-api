@@ -9,6 +9,9 @@ import java.util.Objects;
  * The content must be provided as a temporary file, created either by downloading it
  * through {@code InternetProvider} or by creating it with {@code File.createTempFile()}.
  * <p>
+ * The collector must provide an existing, readable file and must not delete it.
+ * Tibu handles the file and its cleanup; no further action is required from the collector.
+ * <p>
  * The maximum file size is limited to {@link #MAX_SIZE_BYTES}.
  */
 public class FileDto implements Serializable {
@@ -174,4 +177,24 @@ public class FileDto implements Serializable {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
+    /**
+     * Compares file metadata and paths, without reading file contents.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileDto that = (FileDto) o;
+        return type == that.type
+                && Objects.equals(label, that.label)
+                && Objects.equals(contentType, that.contentType)
+                && Objects.equals(file, that.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, label, contentType, file);
+    }
+
 }

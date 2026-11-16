@@ -3,7 +3,9 @@ package com.tibudget.api.exceptions;
 import com.tibudget.dto.MessageDto.MessageType;
 
 /**
- * Throw this exception when a parameter has been incorrectly set.
+ * Raised when validation of collector parameters fails.
+ * The field name identifies the parameter concerned by the validation error.
+ * An authentication rejection from the remote site must use {@link AccessDeny}.
  */
 public class ParameterError extends MessagesException {
 

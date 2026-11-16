@@ -3,9 +3,10 @@ package com.tibudget.api.exceptions;
 import com.tibudget.dto.MessageDto.MessageType;
 
 /**
- * Throw this exception when an error occured while
- * collecting datas. This can occur when service has changed
- * and you cannot parse it anymore.
+ * Raised when collection or parsing fails, for example because the remote
+ * site's data format has changed. Use the more specific exceptions for
+ * authentication rejection, network failures, explicit requests to retry later,
+ * and parameter validation failures.
  */
 public class CollectError extends MessagesException {
 

@@ -63,7 +63,7 @@ public class MessageDto implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(type, Arrays.hashCode(messageArguments), messageKey, fieldName);
+		return Objects.hash(type, Arrays.deepHashCode(messageArguments), messageKey, fieldName);
 	}
 
 	@Override

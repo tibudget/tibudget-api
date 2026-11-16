@@ -243,12 +243,12 @@ public class ItemDto implements Serializable {
     public boolean equals(Object o) {
         if (!(o instanceof ItemDto)) return false;
         ItemDto itemDto = (ItemDto) o;
-        return Double.compare(price, itemDto.price) == 0 && Double.compare(quantity, itemDto.quantity) == 0 && Objects.equals(files, itemDto.files) && Objects.equals(label, itemDto.label) && quantityUnit == itemDto.quantityUnit && Objects.equals(references, itemDto.references) && Objects.equals(url, itemDto.url);
+        return Double.compare(price, itemDto.price) == 0 && Double.compare(quantity, itemDto.quantity) == 0 && Objects.equals(files, itemDto.files) && Objects.equals(label, itemDto.label) && Objects.equals(brand, itemDto.brand) && quantityUnit == itemDto.quantityUnit && Objects.equals(references, itemDto.references) && Objects.equals(url, itemDto.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(files, label, price, quantity, quantityUnit, references, url);
+        return Objects.hash(files, label, brand, price, quantity, quantityUnit, references, url);
     }
 
     @Override

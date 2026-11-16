@@ -1,8 +1,7 @@
 package com.tibudget.dto;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a recurring payment, such as a subscription, an installment plan,
@@ -11,6 +10,8 @@ import java.util.Objects;
 public class RecurringPaymentDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static final int DETAILS_MAX_LENGTH = 2000;
 
     /**
      * Time unit used to describe the recurrence frequency.
@@ -69,6 +70,12 @@ public class RecurringPaymentDto implements Serializable {
      * Example: {@code Amazon Prime}, {@code Home insurance}, {@code Mobile subscription}.
      */
     private String label;
+
+    /**
+     * Additional details about the recurring payment.
+     * Limited to {@link #DETAILS_MAX_LENGTH} characters.
+     */
+    private String details;
 
     /**
      * Expected recurring amount.
@@ -140,6 +147,18 @@ public class RecurringPaymentDto implements Serializable {
     private Date resumeDate;
 
     /**
+     * Documents supporting the recurring payment, such as a subscription contract
+     * or terms and conditions of sale describing the associated rules and obligations.
+     */
+    private final List<FileDto> files;
+
+    /**
+     * Items associated with the recurring payment, such as an article purchased
+     * with payments spread over several months.
+     */
+    private final List<ItemDto> items;
+
+    /**
      * Creates a new recurring payment with no initial data.
      */
     public RecurringPaymentDto() {
@@ -202,6 +221,8 @@ public class RecurringPaymentDto implements Serializable {
         this.recurrenceUnit = recurrenceUnit;
         this.state = state;
         this.resumeDate = resumeDate;
+        this.files = new ArrayList<>();
+        this.items = new ArrayList<>();
     }
 
     /**
@@ -274,6 +295,24 @@ public class RecurringPaymentDto implements Serializable {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    /**
+     * Returns additional details about the recurring payment.
+     *
+     * @return the details
+     */
+    public String getDetails() {
+        return details;
+    }
+
+    /**
+     * Sets additional details about the recurring payment.
+     *
+     * @param details the details, limited to {@link #DETAILS_MAX_LENGTH} characters
+     */
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     /**
@@ -420,17 +459,53 @@ public class RecurringPaymentDto implements Serializable {
         this.resumeDate = resumeDate;
     }
 
+    /**
+     * Returns an unmodifiable list of documents supporting this recurring payment,
+     * such as a subscription contract or terms and conditions of sale.
+     *
+     * @return List of files.
+     */
+    public List<FileDto> getFiles() {
+        return Collections.unmodifiableList(files);
+    }
+
+    public void addFile(FileDto file) {
+        this.files.add(file);
+    }
+
+    /**
+     * Returns an unmodifiable list of items associated with this recurring payment,
+     * such as an article purchased with payments spread over several months.
+     *
+     * @return List of items.
+     */
+    public List<ItemDto> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public void addItem(ItemDto item) {
+        this.items.add(item);
+    }
+
+    public void addItems(List<ItemDto> items) {
+        this.items.addAll(items);
+    }
+
+    /**
+     * Compares recurring payments by UUID. Without a UUID, only the same instance is equal.
+     * Do not change the UUID while this object is a hash-based collection key or element.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RecurringPaymentDto)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         RecurringPaymentDto that = (RecurringPaymentDto) o;
-        return Objects.equals(uuid, that.uuid);
+        return uuid != null && uuid.equals(that.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return uuid != null ? uuid.hashCode() : System.identityHashCode(this);
     }
 
     @Override
@@ -440,6 +515,7 @@ public class RecurringPaymentDto implements Serializable {
                 ", uuid='" + uuid + '\'' +
                 ", accountUuid='" + accountUuid + '\'' +
                 ", label='" + label + '\'' +
+                ", details='" + details + '\'' +
                 ", expectedAmount=" + expectedAmount +
                 ", dateStart=" + dateStart +
                 ", dateEnd=" + dateEnd +

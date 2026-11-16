@@ -25,7 +25,11 @@ public interface CollectorPlugin {
      * @param otpProvider      an instance of {@link OTPProvider} to handle OTP authentication
      * @param pdfToolsProvider an instance of {@link PDFToolsProvider} to provide PDF utils
      * @param settings         a map containing settings previously returned by {@link #getSettings()} after last collect
-     * @param previousAccounts accounts previously collected by this collector. Account can be used to store the last collected transaction in metadatas for exemple. The label may have been modified by the user, this must be preserved.
+     * @param previousAccounts accounts previously collected by this collector. Accounts with
+     *                         {@link AccountDto#isSyncEnabled()} set to {@code false} must be skipped
+     *                         during collection. Newly discovered accounts absent from this list
+     *                         must be returned by {@link #getAccounts()}. Account metadata can store
+     *                         collection progress. Labels modified by the user must be preserved.
      * @param previousRecurringPayments recurring payments previously collected by this collector. The label may have been modified by the user, this must be preserved.
      */
     void init(InternetProvider internetProvider,
@@ -58,9 +62,14 @@ public interface CollectorPlugin {
      *
      * @param callbackUri The full callback URI received by Tibu at the end of the connection flow
      * @return A human-readable title describing the configured connection
+     * @throws CollectError if authentication flow data cannot be processed
+     * @throws AccessDeny if the remote site explicitly rejects authentication
+     * @throws ConnectionFailure if a network problem prevents communication with the remote site
+     * @throws TemporaryUnavailable if the remote site responds and explicitly requests a retry later
+     * @throws ParameterError if collector parameter validation fails
      * @throws IllegalArgumentException if the callback URI is invalid or incomplete
      */
-    String initConnection(URI callbackUri);
+    String initConnection(URI callbackUri) throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
 
     /**
      * JSON configuration to connect to openid server as it is done in AppAuth demo application
@@ -99,10 +108,10 @@ public interface CollectorPlugin {
      *
      * @return {@code true} if the collect is complete, {@code false} if more data remains to be collected
      * @throws CollectError if an error occurs while collecting or parsing data
-     * @throws AccessDeny if access is denied, for example because the credentials are invalid
-     * @throws TemporaryUnavailable if the target service is temporarily unavailable, for example during maintenance
-     * @throws ConnectionFailure if the connection to the target service fails
-     * @throws ParameterError if one or more collector parameters are invalid
+     * @throws AccessDeny if the remote site explicitly rejects authentication
+     * @throws TemporaryUnavailable if the remote site responds and explicitly requests a retry later
+     * @throws ConnectionFailure if a network problem prevents communication with the remote site
+     * @throws ParameterError if collector parameter validation fails
      */
     boolean collect() throws CollectError, AccessDeny, TemporaryUnavailable, ConnectionFailure, ParameterError;
 
@@ -126,6 +135,10 @@ public interface CollectorPlugin {
 
     /**
      * Retrieves the list of synchronized accounts.
+     * Newly discovered accounts absent from the {@code previousAccounts} supplied to
+     * {@link #init} must be included.
+     * Previously collected accounts whose {@link AccountDto#isSyncEnabled()} is
+     * {@code false} must not be synchronized.
      * Even if no new transactions are detected, the accounts must be included in this list
      * if they are synchronized with the provider's website.
      *

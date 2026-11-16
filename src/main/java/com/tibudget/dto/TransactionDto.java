@@ -11,8 +11,8 @@ public class TransactionDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final int LABEL_MAX_LENGTH = 100;
-    public static final int DETAILS_MAX_LENGTH = 1000;
+    public static final int LABEL_MAX_LENGTH = 200;
+    public static final int DETAILS_MAX_LENGTH = 2000;
 
     /**
      * Represents the type of a financial transaction, which is essential for linking related transactions.
